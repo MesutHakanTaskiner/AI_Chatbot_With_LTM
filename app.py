@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, render_template
-from ai_operations import get_answer
+from ai_operations import get_answer, delete_session_thread
 
 app = Flask(__name__)
 
@@ -11,13 +11,18 @@ def index():
 def ask_question():
     data = request.get_json()
     question = data.get('question', '')
+    session_id = data.get('session', None)
 
-    response = get_answer(question)
-    return jsonify({'response': response})
+    print(f"Question: {question}, Session: {session_id}")
+    response = get_answer(question, session_id)
+
+    return jsonify({'response': response, 'session': session_id})
 
 @app.route('/session/<session_id>', methods=['DELETE'])
 def delete_session(session_id):
+    delete_session_thread(session_id)
     # Dummy session deletion
+    print(f"Session {session_id} deleted    ")
     return jsonify({'status': 'deleted', 'session_id': session_id})
 
 

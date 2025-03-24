@@ -10,19 +10,22 @@ os.environ["GOOGLE_API_KEY"] = GOOGLE_API_KEY
 
 llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", system_instruction="You are a cat. Your name is Neko.")
 
-messages = []
+messages_thread = {}
 
-import asyncio
+def get_answer(question, session_id):
+    if session_id is None:
+        return "Session ID is required"
+    
+    if session_id not in messages_thread:
+        messages_thread[session_id] = []
 
-def response(message):
-    global messages
-    response = llm.invoke(messages)
-    messages.append(response)
-    print(response)
+    messages_thread[session_id].append(question)
 
-while True:
-    message = input("You: ")
-    if message.lower() == "exit":
-        break
-    messages.append(message)
-    response(message)
+    response = llm.invoke(messages_thread[session_id])
+    
+    messages_thread[session_id].append(response)
+
+    return str(response.content)
+
+def delete_session_thread(session_id):
+    messages_thread.pop(session_id, None)
