@@ -297,8 +297,16 @@
       const modal = new bootstrap.Modal(document.getElementById('systemInstructionModal'));
       const instructionInput = document.getElementById('systemInstructionInput');
       
-      // Prefill with existing instruction if any
-      instructionInput.value = sessionManager.getSystemInstruction();
+      // Fetch current system instruction
+      fetch('/get_system_instruction')
+        .then(response => response.json())
+        .then(data => {
+          // Prefill with existing instruction
+          instructionInput.value = data.system_instruction || '';
+        })
+        .catch(error => {
+          console.error('Error fetching system instruction:', error);
+        });
       
       modal.show();
     }
@@ -308,25 +316,45 @@
       const instruction = instructionInput.value.trim();
       
       if (instruction) {
-        // Set global system instruction 
-        sessionManager.setSystemInstruction(instruction);
-        
-        // Hide modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('systemInstructionModal'));
-        modal.hide();
-
-        // Optional: Show a notification
-        alert('System instruction updated successfully');
+        // Send to backend endpoint
+        fetch('/set_system_instruction', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ instruction: instruction })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            sessionManager.setSystemInstruction(instruction);
+            const modal = bootstrap.Modal.getInstance(document.getElementById('systemInstructionModal'));
+            modal.hide();
+            alert('System instruction updated successfully');
+          } else {
+            alert('Failed to update system instruction');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Error updating system instruction');
+        });
       }
     }
 
     function showCurrentSystemInstruction() {
-      const instruction = sessionManager.getSystemInstruction();
-      if (instruction) {
-        alert(`Current System Instruction:\n\n${instruction}`);
-      } else {
-        alert('No system instruction set.');
-      }
+      // Fetch current system instruction
+      fetch('/get_system_instruction')
+        .then(response => response.json())
+        .then(data => {
+          if (data.system_instruction) {
+            alert(`Current System Instruction:\n\n${data.system_instruction}`);
+          } else {
+            alert('No system instruction set.');
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching system instruction:', error);
+          alert('Failed to retrieve system instruction');
+        });
     }
 
     // Initialize on page load

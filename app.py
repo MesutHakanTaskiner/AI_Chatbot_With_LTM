@@ -4,9 +4,11 @@ from ai_operations import AiOperations
 app = Flask(__name__)
 ai_ops = AiOperations()
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 @app.route('/ask', methods=['POST'])
 def ask_question():
@@ -19,6 +21,7 @@ def ask_question():
 
     return jsonify({'response': response, 'session': session_id})
 
+
 @app.route('/session/<session_id>', methods=['DELETE'])
 def delete_session(session_id):
     ai_ops.delete_session_thread(session_id)
@@ -27,13 +30,17 @@ def delete_session(session_id):
     return jsonify({'status': 'deleted', 'session_id': session_id})
 
 
-@app.route('/system_instruction', methods=['POST'])
+@app.route('/set_system_instruction', methods=['POST'])
 def system_instruction():
     data = request.get_json()
     instruction = data.get('instruction')
-    # For demonstration, simply print and return success.
-    print(f"System instruction received: {instruction}")
+    ai_ops.set_system_instruction(instruction)
     return jsonify({"status": "success", "message": "System instruction received"})
+
+
+@app.route('/get_system_instruction', methods=['GET'])
+def get_system_instruction():
+    return jsonify({"system_instruction": ai_ops.get_system_instruction()})
 
 if __name__ == '__main__':
     app.run(host="127.0.0.1", debug=True)
