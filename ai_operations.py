@@ -22,6 +22,8 @@ class AiOperations:
             return "Session ID is required"
         if session_id not in self.messages_thread:
             self.messages_thread[session_id] = []
+            self.messages_thread[session_id].append(self.system_instruction)
+
         self.messages_thread[session_id].append(question)
         response = self.llm.invoke(self.messages_thread[session_id])
         self.messages_thread[session_id].append(response)

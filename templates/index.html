@@ -11,6 +11,7 @@
       height: 100vh;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     }
     #main-container {
       display: flex;
@@ -22,6 +23,7 @@
       background-color: #f8f9fa;
       border-right: 1px solid #dee2e6;
       overflow-y: auto;
+      flex-shrink: 0; /* Prevent sidebar from shrinking */
     }
     #messages {
       flex: 1;
@@ -30,12 +32,19 @@
       background-color: #f4f4f4;
       display: flex;
       flex-direction: column;
+      min-width: 0; /* Prevents overflow issues */
+    }
+    #chat {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
     }
     .message {
       margin-bottom: 10px;
       padding: 10px;
       border-radius: 5px;
       max-width: 80%;
+      word-wrap: break-word; /* Ensure long words don't break layout */
     }
     .message.user {
       background-color: #e0f7fa;
