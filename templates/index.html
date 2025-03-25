@@ -78,7 +78,7 @@
     <h3>Sessions</h3>
       <div id="sessionList">
         <div class="session-container">
-          <div class="session active" data-session="session1">Session 1</div>
+          <div class="session active" data-session="session1" onclick="switchSession('session1')">Session 1</div>
           <button style="margin-left: 5px;" onclick="deleteSession('session1', this)">Delete</button>
         </div>
       </div>
@@ -192,6 +192,11 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
+  document.querySelectorAll('.session').forEach(function(el) {
+    el.addEventListener('click', function() {
+      switchSession(el.dataset.session);
+    });
+  });
 });
 </script>
 </body>
