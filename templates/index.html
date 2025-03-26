@@ -353,9 +353,21 @@
     }
 
     function deleteSession(sessionId, btn) {
-      const remainingSessionId = sessionManager.deleteSession(sessionId);
-      renderSessions();
-      switchSession(remainingSessionId);
+      fetch(`/session/${sessionId}`, { method: 'DELETE' })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to delete session');
+          }
+          return response.json();
+        })
+        .then(data => {
+          const remainingSessionId = sessionManager.deleteSession(sessionId);
+          renderSessions();
+          switchSession(remainingSessionId);
+        })
+        .catch(error => {
+          alert("Error deleting session: " + error.message);
+        });
     }
 
     function addSystemInstruction() {

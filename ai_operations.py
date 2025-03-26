@@ -1,19 +1,28 @@
 import os
-from langchain_google_genai import ChatGoogleGenerativeAI
 from dotenv import load_dotenv
-from typing import Dict, List
+from langchain_google_genai import GoogleGenerativeAI
+from langchain.output_parsers import PydanticOutputParser
+from typing import List, Dict
+from schemas.schema import ResponseSchema, CriticInfo, LTMInformations
+import json
+
 
 load_dotenv()
 
-GOOGLE_API_KEY = os.getenv("API_KEY")
-os.environ["GOOGLE_API_KEY"] = GOOGLE_API_KEY
-
+API_KEY = os.getenv("API_KEY")
 system_instruction = os.getenv("SYSTEM_INSTRUCTION")
+
+output_parser = PydanticOutputParser(pydantic_object=ResponseSchema)
+
 
 class AiOperations:
     # Initializes AiOperations by setting up the language model and message threads.
     def __init__(self) -> None:
-        self.llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash")
+        self.llm = llm = GoogleGenerativeAI(
+            model="gemini-2.0-flash",
+            google_api_key=os.getenv("API_KEY"),
+            temperature=0.1
+        )
         self.messages_thread: Dict[str, List[str]] = {}
         self.system_instruction = system_instruction
         self.user_instruction = ""
@@ -26,10 +35,21 @@ class AiOperations:
             self.messages_thread[session_id] = []
             self.messages_thread[session_id].append(self.system_instruction)
 
-        self.messages_thread[session_id].append(question)
-        response = self.llm.invoke(self.messages_thread[session_id])
-        self.messages_thread[session_id].append(response)
-        return str(response.content)
+        try:
+            prompt = f"{question}\n\n {output_parser.get_format_instructions()}"
+            self.messages_thread[session_id].append(prompt)
+            output = self.llm.invoke(self.messages_thread[session_id])
+            
+            # Parse the output
+            parsed_response = output_parser.parse(output)
+            
+            # Print the formatted response
+            print(parsed_response.format_LTM())
+
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+        return str(parsed_response.format_LTM()[0])
 
     # Deletes the message thread associated with the given session id.
     def delete_session_thread(self, session_id: str) -> None:
@@ -52,17 +72,3 @@ class AiOperations:
     def get_memory(self) -> Dict[str, str]:
         return self.messages_thread
     
-
-def ltm_parser(response: str) -> str:
-    try:
-        raw_response = response.split("LTM BİLGİLERİ")
-        response = raw_response[0]
-        ltm_information = raw_response[1]
-    except Exception as e:
-        print("Error:", e)
-        ltm_information = ""
-
-    print("Response:", response, "\nLTM Information:", ltm_information)
-
-    return response, ltm_information
-
