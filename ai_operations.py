@@ -51,3 +51,18 @@ class AiOperations:
     # Retrieves the memory data.
     def get_memory(self) -> Dict[str, str]:
         return self.messages_thread
+    
+
+def ltm_parser(response: str) -> str:
+    try:
+        raw_response = response.split("LTM BİLGİLERİ")
+        response = raw_response[0]
+        ltm_information = raw_response[1]
+    except Exception as e:
+        print("Error:", e)
+        ltm_information = ""
+
+    print("Response:", response, "\nLTM Information:", ltm_information)
+
+    return response, ltm_information
+

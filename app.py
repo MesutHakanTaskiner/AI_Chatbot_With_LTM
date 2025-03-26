@@ -5,7 +5,7 @@ This module sets up routes for asking questions, deleting sessions, and modifyin
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
-from ai_operations import AiOperations
+from ai_operations import AiOperations, ltm_parser
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
@@ -16,14 +16,19 @@ ai_ops = AiOperations()
 async def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-
 @app.post("/ask")
 async def ask_question(request: Request):
     data = await request.json()
     question = data.get("question", "")
     session_id = data.get("session", None)
+
     print(f"Question: {question}, Session: {session_id}")
-    response = ai_ops.get_answer(question, session_id)
+    raw_response = ai_ops.get_answer(question, session_id)
+
+    print("Raw response:", raw_response)
+    response, ltm_information = ltm_parser(raw_response)
+
+
     return JSONResponse(content={"response": response, "session": session_id})
 
 
