@@ -46,6 +46,27 @@ async def system_instruction(request: Request):
 async def get_system_instruction():
     return JSONResponse(content={"system_instruction": ai_ops.get_system_instruction()})
 
+@app.get("/get_memory")
+async def get_memory():
+    print("Memory requested")
+    memory_data = ai_ops.get_memory()
+    return JSONResponse(content={"memory": memory_data})
+
+
+@app.post("/update_memory")
+async def update_memory(request: Request):
+    data = await request.json()
+    key = data.get("key")
+    new_value = data.get("new_value")
+    result = ai_ops.update_memory(key, new_value)
+    return JSONResponse(content={"status": "success", "message": "Memory updated", "result": result})
+
+@app.post("/delete_memory")
+async def delete_memory(request: Request):
+    data = await request.json()
+    key = data.get("key")
+    result = ai_ops.delete_memory(key)
+    return JSONResponse(content={"status": "success", "message": "Memory deleted", "result": result})
 
 if __name__ == "__main__":
     import uvicorn

@@ -47,3 +47,7 @@ class AiOperations:
     # Retrieves the current system instruction set by the user.
     def get_system_instruction(self) -> str:
         return self.user_instruction
+    
+    # Retrieves the memory data.
+    def get_memory(self) -> Dict[str, str]:
+        return self.messages_thread

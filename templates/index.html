@@ -72,6 +72,8 @@
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
             <li><a class="dropdown-item" href="#" onclick="addSystemInstruction()">Add System Instruction</a></li>
             <li><a class="dropdown-item" href="#" onclick="showCurrentSystemInstruction()">View System Instruction</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#" onclick="showMemoryPanel()">Memory</a></li>
           </ul>
         </div>
       </div>
@@ -139,6 +141,43 @@
         <div class="modal-body">
           <pre id="viewSystemInstructionContent" style="white-space: pre-wrap;"></pre>
         </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal for Memory Panel -->
+  <div class="modal fade" id="memoryModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Memory</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div id="memoryList" class="list-group"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal for Editing Memory Item -->
+  <div class="modal fade" id="editMemoryModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+             <h5 class="modal-title">Edit Memory Item</h5>
+             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+         </div>
+         <div class="modal-body">
+             <input type="hidden" id="editMemoryKey">
+             <div class="mb-3">
+                <label for="editMemoryValue" class="form-label">Value</label>
+                <textarea id="editMemoryValue" class="form-control" rows="3"></textarea>
+             </div>
+         </div>
+         <div class="modal-footer">
+             <button class="btn btn-danger" onclick="deleteMemory()">Delete</button>
+             <button class="btn btn-primary" onclick="updateMemory()">Update</button>
+         </div>
       </div>
     </div>
   </div>
@@ -382,7 +421,87 @@
           modal.show();
         });
     }
-
+    
+    function showMemoryPanel() {
+      fetch('/get_memory')
+        .then(response => response.json())
+        .then(data => {
+          const memory = data.memory;
+          const memoryList = document.getElementById('memoryList');
+          memoryList.innerHTML = '';
+          for (const key in memory) {
+            if (memory.hasOwnProperty(key)) {
+              const item = document.createElement('a');
+              item.href = "#";
+              item.className = "list-group-item list-group-item-action";
+              item.textContent = key + ": " + memory[key];
+              item.onclick = function(e) {
+                 e.preventDefault();
+                 showEditMemoryItem(key, memory[key]);
+              };
+              memoryList.appendChild(item);
+            }
+          }
+          var modal = new bootstrap.Modal(document.getElementById('memoryModal'));
+          modal.show();
+        })
+        .catch(error => {
+          console.error('Error fetching memory:', error);
+          const memoryList = document.getElementById('memoryList');
+          memoryList.innerHTML = '<div class="alert alert-danger">Error fetching memory data.</div>';
+          var modal = new bootstrap.Modal(document.getElementById('memoryModal'));
+          modal.show();
+        });
+    }
+    
+    function showEditMemoryItem(key, value) {
+       document.getElementById('editMemoryKey').value = key;
+       document.getElementById('editMemoryValue').value = value;
+       var editModal = new bootstrap.Modal(document.getElementById('editMemoryModal'));
+       editModal.show();
+    }
+    
+    function updateMemory() {
+       const key = document.getElementById('editMemoryKey').value;
+       const newValue = document.getElementById('editMemoryValue').value;
+       fetch('/update_memory', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key: key, new_value: newValue })
+       })
+       .then(response => response.json())
+       .then(data => {
+          alert("Memory updated successfully");
+          showMemoryPanel();
+          var editModal = bootstrap.Modal.getInstance(document.getElementById('editMemoryModal'));
+          editModal.hide();
+       })
+       .catch(error => {
+          console.error('Error updating memory:', error);
+          alert("Error updating memory item");
+       });
+    }
+    
+    function deleteMemory() {
+       const key = document.getElementById('editMemoryKey').value;
+       fetch('/delete_memory', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key: key })
+       })
+       .then(response => response.json())
+       .then(data => {
+          alert("Memory deleted successfully");
+          showMemoryPanel();
+          var editModal = bootstrap.Modal.getInstance(document.getElementById('editMemoryModal'));
+          editModal.hide();
+       })
+       .catch(error => {
+          console.error('Error deleting memory:', error);
+          alert("Error deleting memory item");
+       });
+    }
+    
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
       renderSessions();
