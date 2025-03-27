@@ -59,10 +59,7 @@ async def get_memory():
 @app.post("/update_memory")
 async def update_memory(request: Request):
     data = await request.json()
-    print(f"Data: {data}")
-    key = data.get("key")
-    new_value = data.get("new_value")
-    result = ai_ops.update_memory(key, new_value)
+    result = ai_ops.update_memory(data)
     return JSONResponse(content={"status": "success", "message": "Memory updated", "result": result})
 
 @app.post("/delete_memory")

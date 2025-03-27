@@ -1,5 +1,6 @@
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 import os
+from sklearn.metrics.pairwise import cosine_similarity
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -15,6 +16,11 @@ def get_embedding(text: str) -> str:
     return str(vector)
 
 
-# Cosine similarity between two embeddings
-def cosine_similarity(embedding1: str, embedding2: str) -> float:
-    return embeddings.cosine_similarity(embedding1, embedding2)
+def embedding_compare(embed1: str, embed2: str) -> float:
+    similarity_score = cosine_similarity(embed1, embed1)[0][0]
+    print("similarity", similarity_score)
+
+    if similarity_score > 0.7:
+        return False
+    else:
+        return True

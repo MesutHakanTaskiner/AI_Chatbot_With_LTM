@@ -53,13 +53,19 @@ def save_metadata(ltm_info):
     for field, value in processed_data.items():
         model = field_model_map.get(field)
         if model:
-            # if record already exists in the database, update the record
+            # if value exists in the database then update the value and embedding
             if session.query(model).filter(model.value == value).first():
-                update_ltm_data({"key": field, "value": value, "new_value": value})
-                continue
+                session.query(model).filter(model.value == value).update({"value": value})
+                embedding = get_embedding(value)
+                session.query(model).filter(model.value == value).update({"embedding": embedding})
 
-            embedding = get_embedding(value)
-            record = model(value=value, embedding=embedding)
+                record = model(value=value, embedding=embedding)
+            
+            # if value does not exist in the database then add the value and embedding
+            else:
+                embedding = get_embedding(value)
+                record = model(value=value, embedding=embedding)
+
             session.add(record)
     session.commit()
     session.close()
@@ -103,12 +109,14 @@ def delete_ltm_data(data):
 def update_ltm_data(data):
     # update ltm data according to key
     session = SessionLocal()
+
+    print("update data", data)
     
     model = field_model_map.get(data["key"])
     if model:
-        session.query(model).filter(model.value == data["value"]).update({"value": data["new_value"]})
+        session.query(model).filter(model.value == data["old_value"]).update({"value": data["new_value"]})
         embed = get_embedding(data["new_value"])
-        session.query(model).filter(model.value == data["value"]).update({"embedding": embed})
+        session.query(model).filter(model.value == data["old_value"]).update({"embedding": embed})
 
     session.commit()
     session.close()
