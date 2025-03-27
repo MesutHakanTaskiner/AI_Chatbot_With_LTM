@@ -1,44 +1,64 @@
 import os
-import sqlite3
-from database.init_db import init_db
-from datetime import datetime
-import json
+from database.init_db import init_db, LTMName, LTMDates, LTMProfession, LTMLocation, LTMPreferences, LTMPersonalDetails, LTMGoals, LTMSpecialDetails, LTMAdditionalDetails
+from sqlalchemy.orm import sessionmaker
+from operations.get_embedding import embedding_creator
 
-db_path = "ltm.db"
+# Initialize engine and sessionmaker using SQLAlchemy ORM
+engine = init_db()
+SessionLocal = sessionmaker(bind=engine)
 
-def init_db_if_needed(db_path=db_path):
-    if not os.path.exists(db_path):
+db_file = "LTM.db"
+
+def init_db_if_needed():
+    # For SQLite, check if the database file exists (assumes DATABASE_URL of the form "sqlite:///LTM.db")
+    if not os.path.exists(db_file):
         print("Database file not found. Initializing new database.")
-        init_db(db_path)
+        init_db()
     else:
         print("Database already exists.")
 
-# Placeholder for saving data into the database
+def check_ltm_data(ltm_info):
+    """
+    Processes ltm_info by joining list entries into strings.
+    Returns a dictionary mapping field names to non-empty string values.
+    """
+    fields = ["name", "dates", "profession", "location", "preferences", "personal_details", "goals", "special_details", "additional_details"]
+    data = {}
+    for field in fields:
+        value = " ".join(getattr(ltm_info, field, []))
+        if value.strip():
+            data[field] = value.strip()
+    return data
+
 def save_metadata(ltm_info):
+    """
+    Saves LTM information into corresponding tables.
+    Only non-empty fields are saved.
+    """
+    processed_data = check_ltm_data(ltm_info)
+    # Mapping of field names to corresponding ORM model
+    field_model_map = {
+        "name": LTMName,
+        "dates": LTMDates,
+        "profession": LTMProfession,
+        "location": LTMLocation,
+        "preferences": LTMPreferences,
+        "personal_details": LTMPersonalDetails,
+        "goals": LTMGoals,
+        "special_details": LTMSpecialDetails,
+        "additional_details": LTMAdditionalDetails
+    }
+    session = SessionLocal()
+    for field, value in processed_data.items():
+        model = field_model_map.get(field)
+        if model:
+            embedding = embedding_creator(value)
+            record = model(value=value, embedding=embedding)
+            session.add(record)
+    session.commit()
+    session.close()
 
-    ltm_name = (" ").join(ltm_info.name)
-    ltm_dates = (" ").join(ltm_info.dates)
-    ltm_profession = (" ").join(ltm_info.profession)
-    ltm_location = (" ").join(ltm_info.location)
-    ltm_preferences = (" ").join(ltm_info.preferences)
-    ltm_personal_details = (" ").join(ltm_info.personal_details)
-    ltm_goals = (" ").join(ltm_info.goals)
-    ltm_special_details = (" ").join(ltm_info.special_details)
 
 
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        INSERT INTO user_details (name, dates, profession, location, preferences, personal_details, goals, special_details)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    """, (ltm_name, ltm_dates, ltm_profession, ltm_location, ltm_preferences, ltm_personal_details, ltm_goals, ltm_special_details))
 
 
-    conn.commit()
-    conn.close()
-
-# Placeholder for updating data in the database
-def update_data(data):
-    # Implement update functionality here
-    pass

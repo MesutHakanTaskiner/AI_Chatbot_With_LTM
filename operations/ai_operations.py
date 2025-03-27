@@ -4,24 +4,23 @@ from langchain_google_genai import GoogleGenerativeAI
 from langchain.output_parsers import PydanticOutputParser
 from typing import List, Dict
 from schemas.schema import ResponseSchema, CriticInfo, LTMInformations
-from operations.db import save_metadata, update_data
+from operations.db import save_metadata, check_ltm_data
 import json
-
+from dotenv import load_dotenv
 
 load_dotenv()
 
-API_KEY = os.getenv("API_KEY")
 system_instruction = os.getenv("SYSTEM_INSTRUCTION")
+API_KEY = os.getenv("API_KEY")
 
 output_parser = PydanticOutputParser(pydantic_object=ResponseSchema)
-
 
 class AiOperations:
     # Initializes AiOperations by setting up the language model and message threads.
     def __init__(self) -> None:
         self.llm = GoogleGenerativeAI(
             model="gemini-2.0-flash",
-            google_api_key=os.getenv("API_KEY"),
+            google_api_key=API_KEY,
             temperature=0.1
         )
         self.messages_thread: Dict[str, List[str]] = {}
@@ -44,12 +43,11 @@ class AiOperations:
             # Parse the output
             parsed_response = output_parser.parse(output)
 
-            print(parsed_response.format_LTM()[0], parsed_response.format_LTM()[1])
+            print(parsed_response)
 
             save_metadata(parsed_response.format_LTM()[1])
         except Exception as e:
             print(f"An error occurred: {e}")
-
 
         return str(parsed_response.format_LTM()[0])
 
@@ -73,4 +71,14 @@ class AiOperations:
     # Retrieves the memory data.
     def get_memory(self) -> Dict[str, str]:
         return self.messages_thread
-    
+
+    # Updates memory for a given key with a new value.
+    def update_memory(self, key, new_value):
+        if key in self.messages_thread:
+            self.messages_thread[key] = new_value
+            return self.messages_thread[key]
+        return "Key not found"
+
+    # Deletes memory for a given key.
+    def delete_memory(self, key):
+        return self.messages_thread.pop(key, "Key not found")

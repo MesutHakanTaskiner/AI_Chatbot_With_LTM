@@ -11,6 +11,7 @@ class CriticInfo(BaseModel):
     personal_details: List[str]          # More personal details of the user (hobbies, interests etc.)
     goals: List[str]                     # Goals of the user (career goals, personal goals etc.)
     special_details: List[str]           # Special details of the user (medical conditions, etc.)
+    additional_info: List[str]           # Additional information about the user
 
 
 class LTMInformations(BaseModel):

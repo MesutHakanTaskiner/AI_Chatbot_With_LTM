@@ -1,44 +1,69 @@
-import sqlite3
+from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.orm import declarative_base
 
-def init_db(db_path):
-    conn = sqlite3.connect(db_path)
-    cur = conn.cursor()
+DATABASE_URL = "sqlite:///LTM.db"
 
-    # Create table for user details with required fields and auto-increment id
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS user_details (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT,
-            dates TEXT,
-            profession TEXT,
-            location TEXT,
-            preferences TEXT,
-            personal_details TEXT,
-            goals TEXT,
-            special_details TEXT
-        )
-    """)
+Base = declarative_base()
 
-    # Create table for embeddings with a foreign key referencing user_details id
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS embeddings (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER,
-            name blob,
-            dates blob,
-            profession blob,
-            location blob,
-            preferences blob,
-            personal_details blob,
-            goals blob,
-            special_details blob,
-            FOREIGN KEY (user_id) REFERENCES user_details(id)
-        )
-    """)
+class LTMName(Base):
+    __tablename__ = "ltm_names"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    value = Column(String)
+    embedding = Column(String)
 
-    conn.commit()
-    conn.close()
+class LTMDates(Base):
+    __tablename__ = "ltm_dates"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    value = Column(String)
+    embedding = Column(String)
+
+class LTMProfession(Base):
+    __tablename__ = "ltm_professions"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    value = Column(String)
+    embedding = Column(String)
+
+class LTMLocation(Base):
+    __tablename__ = "ltm_locations"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    value = Column(String)
+    embedding = Column(String)
+
+class LTMPreferences(Base):
+    __tablename__ = "ltm_preferences"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    value = Column(String)
+    embedding = Column(String)
+
+class LTMPersonalDetails(Base):
+    __tablename__ = "ltm_personal_details"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    value = Column(String)
+    embedding = Column(String)
+
+class LTMGoals(Base):
+    __tablename__ = "ltm_goals"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    value = Column(String)
+    embedding = Column(String)
+
+class LTMSpecialDetails(Base):
+    __tablename__ = "ltm_special_details"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    value = Column(String)
+    embedding = Column(String)
+
+class LTMAdditionalDetails(Base):
+    __tablename__ = "ltm_additional_details"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    value = Column(String)
+    embedding = Column(String)
+
+def init_db():
+    engine = create_engine(DATABASE_URL, echo=True)
+    Base.metadata.create_all(engine)
+    return engine
 
 if __name__ == "__main__":
-    init_db()
-    print("Database initialized.")
+    engine = init_db()
+    print("Database initialized using SQLAlchemy ORM.")
