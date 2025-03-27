@@ -62,7 +62,7 @@ class LTMSocialInfo(Base):
     embedding = Column(String)
 
 class LTMAdditionalDetails(Base):
-    __tablename__ = "ltm_additional_details"
+    __tablename__ = "additional_details"
     id = Column(Integer, primary_key=True, autoincrement=True)
     value = Column(String)
     embedding = Column(String)

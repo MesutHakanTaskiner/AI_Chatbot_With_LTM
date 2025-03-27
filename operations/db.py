@@ -60,9 +60,9 @@ def save_metadata(ltm_info):
             if session.query(model).filter(model.value == value).first():
                 pass
 
-            
             # if value does not exist in the database then add the value and embedding
             else:
+                
                 embedding = get_embedding(value)
                 record = model(value=value, embedding=embedding)
 

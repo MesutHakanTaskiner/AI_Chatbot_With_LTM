@@ -16,8 +16,8 @@ def get_embedding(text: str) -> str:
     return str(vector)
 
 
-def embedding_compare(embed1: str, embed2: str) -> float:
-    similarity_score = cosine_similarity(embed1, embed1)[0][0]
+def compare_embeddings(embed1: str, embed2: str) -> float:
+    similarity_score = cosine_similarity(embed1, embed2)[0][0]
     print("similarity", similarity_score)
 
     if similarity_score > 0.7:
