@@ -1,18 +1,19 @@
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Dict
 
 
 class CriticalInfo(BaseModel):
-    name: List[str]                      # Name of the user (first name, last name etc.)
-    dates: List[str]                     # Dates (birth date, anniversary date etc.)
-    profession: List[str]                # Profession of the user (doctor, engineer etc.)
-    location: List[str]                  # Location of the user (city, country etc.)
-    education: List[str]                 # Education of the user (school, college, university etc.)
-    personal_details: List[str]          # More personal details of the user (hobbies, interests etc.)
-    goals: List[str]                     # Goals of the user (career goals, personal goals etc.)
-    special_details: List[str]           # Special details of the user (medical conditions, etc.)
-    social_info: List[str]               # Social information of the user (social media handles etc.)
-    additional_info: List[str]           # Additional information about the user
+    name: Dict[str, str]                      # Name of the user (first name, last name etc.)
+    dates: Dict[str, str]                     # Dates (birth date, anniversary date etc.)
+    profession: Dict[str, str]                # Profession of the user (doctor, engineer etc.)
+    location: Dict[str, str]                  # Location of the user (city, country etc.)
+    education: Dict[str, str]                 # Education of the user (school, college, university etc.)
+    personal_details: Dict[str, str]          # More personal details of the user (hobbies, interests etc.)
+    goals: Dict[str, str]                     # Goals of the user (career goals, personal goals etc.)
+    special_details: Dict[str, str]           # Special details of the user (medical conditions, etc.)
+    social_info: Dict[str, str]               # Social information of the user (social media handles etc.)
+    additional_info: Dict[str, str]           # Additional information about the user
+    
 
 
 class ContextAndLTMScores(BaseModel):
