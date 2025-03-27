@@ -4,6 +4,7 @@ from langchain_google_genai import GoogleGenerativeAI
 from langchain.output_parsers import PydanticOutputParser
 from typing import List, Dict
 from schemas.schema import ResponseSchema, CriticInfo, LTMInformations
+from database.db import save_metadata, update_data
 import json
 
 
@@ -18,7 +19,7 @@ output_parser = PydanticOutputParser(pydantic_object=ResponseSchema)
 class AiOperations:
     # Initializes AiOperations by setting up the language model and message threads.
     def __init__(self) -> None:
-        self.llm = llm = GoogleGenerativeAI(
+        self.llm = GoogleGenerativeAI(
             model="gemini-2.0-flash",
             google_api_key=os.getenv("API_KEY"),
             temperature=0.1
@@ -42,12 +43,13 @@ class AiOperations:
             
             # Parse the output
             parsed_response = output_parser.parse(output)
-            
-            # Print the formatted response
-            print(parsed_response.format_LTM())
 
+            print(parsed_response.format_LTM()[0], parsed_response.format_LTM()[1])
+
+            save_metadata(parsed_response.format_LTM()[1])
         except Exception as e:
             print(f"An error occurred: {e}")
+
 
         return str(parsed_response.format_LTM()[0])
 
