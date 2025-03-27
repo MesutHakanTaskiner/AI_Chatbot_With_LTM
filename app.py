@@ -5,7 +5,7 @@ This module sets up routes for asking questions, deleting sessions, and modifyin
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
-from ai_operations import AiOperations
+from operations.ai_operations import AiOperations
 
 
 app = FastAPI()
@@ -72,7 +72,7 @@ async def delete_memory(request: Request):
     return JSONResponse(content={"status": "success", "message": "Memory deleted", "result": result})
 
 if __name__ == "__main__":
-    from database.db import init_db_if_needed
+    from operations.db import init_db_if_needed
     init_db_if_needed()
     import uvicorn
     uvicorn.run("app:app", host="127.0.0.1", port=8000, reload=True)

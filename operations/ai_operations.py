@@ -4,7 +4,7 @@ from langchain_google_genai import GoogleGenerativeAI
 from langchain.output_parsers import PydanticOutputParser
 from typing import List, Dict
 from schemas.schema import ResponseSchema, CriticInfo, LTMInformations
-from database.db import save_metadata, update_data
+from operations.db import save_metadata, update_data
 import json
 
 
