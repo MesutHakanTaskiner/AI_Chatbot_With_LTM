@@ -6,12 +6,7 @@ from typing import List, Dict
 from schemas.schema import ResponseSchema
 from operations.db import save_metadata, get_ltm_data_from_db, delete_ltm_data, update_ltm_data
 import json
-from dotenv import load_dotenv
-
-load_dotenv()
-
-system_instruction = os.getenv("SYSTEM_INSTRUCTION")
-API_KEY = os.getenv("API_KEY")
+from utils.config import system_instruction, API_KEY
 
 output_parser = PydanticOutputParser(pydantic_object=ResponseSchema)
 
