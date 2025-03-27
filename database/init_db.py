@@ -68,7 +68,7 @@ class LTMAdditionalDetails(Base):
     embedding = Column(String)
 
 def init_db():
-    engine = create_engine(DATABASE_URL, echo=True)
+    engine = create_engine(DATABASE_URL, echo=False)
     Base.metadata.create_all(engine)
     return engine
 
