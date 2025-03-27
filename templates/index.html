@@ -333,6 +333,18 @@
       .then(data => {
         sessionManager.addMessage('gpt', data.response);
         renderMessages();
+
+        // Update session name if context is not empty
+        if (data.context && data.context.trim() !== '') {
+          // Truncate context to 20 characters for session name
+          const newSessionName = `${data.context.substring(0, 20)}${data.context.length > 20 ? '...' : ''}`;
+          
+          // Update the session name in the UI
+          const currentSessionElement = document.querySelector(`.session-container[data-session="${sessionManager.currentSession}"] h6`);
+          if (currentSessionElement) {
+            currentSessionElement.textContent = newSessionName;
+          }
+        }
       })
       .catch(error => {
         console.error('Error:', error);
