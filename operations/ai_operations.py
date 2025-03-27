@@ -4,7 +4,7 @@ from langchain_google_genai import GoogleGenerativeAI
 from langchain.output_parsers import PydanticOutputParser
 from typing import List, Dict
 from schemas.schema import ResponseSchema, CriticInfo, LTMInformations
-from operations.db import save_metadata, get_ltm_data_from_db, delete_ltm_data
+from operations.db import save_metadata, get_ltm_data_from_db, delete_ltm_data, update_ltm_data
 import json
 from dotenv import load_dotenv
 
@@ -72,11 +72,11 @@ class AiOperations:
         return data
 
     # Updates memory for a given key with a new value.
-    def update_memory(self, key, new_value):
-        if key in self.messages_thread:
-            self.messages_thread[key] = new_value
-            return self.messages_thread[key]
-        return "Key not found"
+    def update_memory(self, data):
+        is_succes = update_ltm_data(data)
+        if is_succes:
+            return "Memory updated successfully"
+        return "Memory not found"
 
     # Deletes memory for a given key.
     def delete_memory(self, data):

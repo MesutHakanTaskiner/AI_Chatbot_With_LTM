@@ -29,12 +29,6 @@ class LTMLocation(Base):
     value = Column(String)
     embedding = Column(String)
 
-class LTMPreferences(Base):
-    __tablename__ = "ltm_preferences"
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    value = Column(String)
-    embedding = Column(String)
-
 class LTMPersonalDetails(Base):
     __tablename__ = "ltm_personal_details"
     id = Column(Integer, primary_key=True, autoincrement=True)

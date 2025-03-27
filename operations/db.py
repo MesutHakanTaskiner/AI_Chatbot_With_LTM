@@ -1,5 +1,5 @@
 import os
-from database.init_db import init_db, LTMName, LTMDates, LTMProfession, LTMLocation, LTMPreferences, LTMPersonalDetails, LTMGoals, LTMSpecialDetails, LTMAdditionalDetails
+from database.init_db import init_db, LTMName, LTMDates, LTMProfession, LTMLocation, LTMPersonalDetails, LTMGoals, LTMSpecialDetails, LTMAdditionalDetails
 from sqlalchemy.orm import sessionmaker
 from operations.embedding import get_embedding
 
@@ -14,7 +14,6 @@ field_model_map = {
         "dates": LTMDates,
         "profession": LTMProfession,
         "location": LTMLocation,
-        "preferences": LTMPreferences,
         "personal_details": LTMPersonalDetails,
         "goals": LTMGoals,
         "special_details": LTMSpecialDetails,
@@ -34,7 +33,7 @@ def check_ltm_data(ltm_info):
     Processes ltm_info by joining list entries into strings.
     Returns a dictionary mapping field names to non-empty string values.
     """
-    fields = ["name", "dates", "profession", "location", "preferences", "personal_details", "goals", "special_details", "additional_details"]
+    fields = ["name", "dates", "profession", "location", "personal_details", "goals", "special_details", "additional_details"]
     data = {}
     for field in fields:
         value = " ".join(getattr(ltm_info, field, []))
@@ -54,6 +53,11 @@ def save_metadata(ltm_info):
     for field, value in processed_data.items():
         model = field_model_map.get(field)
         if model:
+            # if record already exists in the database, update the record
+            if session.query(model).filter(model.value == value).first():
+                update_ltm_data({"key": field, "value": value, "new_value": value})
+                continue
+
             embedding = get_embedding(value)
             record = model(value=value, embedding=embedding)
             session.add(record)
@@ -71,7 +75,6 @@ def get_ltm_data_from_db():
         "dates": [dates.value for dates in session.query(LTMDates).all()],
         "profession": [profession.value for profession in session.query(LTMProfession).all()],
         "location": [location.value for location in session.query(LTMLocation).all()],
-        "preferences": [preferences.value for preferences in session.query(LTMPreferences).all()],
         "personal_details": [personal_details.value for personal_details in session.query(LTMPersonalDetails).all()],
         "goals": [goals.value for goals in session.query(LTMGoals).all()],
         "special_details": [special_details.value for special_details in session.query(LTMSpecialDetails).all()],
@@ -96,6 +99,21 @@ def delete_ltm_data(data):
     session.close()
 
     return "Data deleted successfully"
+
+def update_ltm_data(data):
+    # update ltm data according to key
+    session = SessionLocal()
+    
+    model = field_model_map.get(data["key"])
+    if model:
+        session.query(model).filter(model.value == data["value"]).update({"value": data["new_value"]})
+        embed = get_embedding(data["new_value"])
+        session.query(model).filter(model.value == data["value"]).update({"embedding": embed})
+
+    session.commit()
+    session.close()
+
+    return "Data updated successfully"
 
 
 

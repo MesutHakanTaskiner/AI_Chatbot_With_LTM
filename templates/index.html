@@ -169,6 +169,7 @@
          </div>
          <div class="modal-body">
              <input type="hidden" id="editMemoryKey">
+             <input type="hidden" id="oldMemoryValue">
              <div class="mb-3">
                 <label for="editMemoryValue" class="form-label">Value</label>
                 <textarea id="editMemoryValue" class="form-control" rows="3"></textarea>
@@ -469,17 +470,19 @@
     function showEditMemoryItem(key, value) {
        document.getElementById('editMemoryKey').value = key;
        document.getElementById('editMemoryValue').value = value;
+       document.getElementById('oldMemoryValue').value = value;
        var editModal = new bootstrap.Modal(document.getElementById('editMemoryModal'));
        editModal.show();
     }
     
     function updateMemory() {
        const key = document.getElementById('editMemoryKey').value;
+       const oldValue = document.getElementById('oldMemoryValue').value;
        const newValue = document.getElementById('editMemoryValue').value;
        fetch('/update_memory', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ key: key, new_value: newValue })
+          body: JSON.stringify({ key: key, old_value: oldValue, new_value: newValue })
        })
        .then(response => response.json())
        .then(data => {

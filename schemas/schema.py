@@ -7,7 +7,6 @@ class CriticInfo(BaseModel):
     dates: List[str]                     # Dates (birth date, anniversary date etc.)
     profession: List[str]                # Profession of the user (doctor, engineer etc.)
     location: List[str]                  # Location of the user (city, country etc.)
-    preferences: List[str]               # Preferences of the user (food, music, etc.)
     personal_details: List[str]          # More personal details of the user (hobbies, interests etc.)
     goals: List[str]                     # Goals of the user (career goals, personal goals etc.)
     special_details: List[str]           # Special details of the user (medical conditions, etc.)
