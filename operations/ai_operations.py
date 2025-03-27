@@ -38,12 +38,16 @@ class AiOperations:
             self.messages_thread[session_id].append(prompt)
             output = self.llm.invoke(self.messages_thread[session_id])
             
+            print(f"Output: {output}")
+
             # Parse the output
             parsed_response = output_parser.parse(output)
             
             if first_time:
                 context = parsed_response.format_LTM()[2]
                 self.messages_thread[session_id].append(context)
+
+            print(f"Response: {parsed_response.format_LTM()}")
 
             save_metadata(parsed_response.format_LTM()[1])
         except Exception as e:

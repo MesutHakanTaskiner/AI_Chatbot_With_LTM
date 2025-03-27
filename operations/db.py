@@ -36,7 +36,7 @@ def check_ltm_data(ltm_info):
     Processes ltm_info by joining list entries into strings.
     Returns a dictionary mapping field names to non-empty string values.
     """
-    fields = ["name", "dates", "profession", "location", "personal_details", "goals", "special_details", "additional_details"]
+    fields = ["name", "dates", "profession", "location", "education", "personal_details", "goals", "special_details", "social_info", "additional_details"]
     data = {}
     for field in fields:
         value = " ".join(getattr(ltm_info, field, []))

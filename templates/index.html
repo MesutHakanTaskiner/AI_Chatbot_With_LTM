@@ -192,9 +192,16 @@
         this.currentSession = localStorage.getItem('currentSession') || 'session1';
         this.systemInstruction = localStorage.getItem('globalSystemInstruction') || '';
         
+        // Migrate old session format if needed
+        for (const key in this.sessions) {
+          if (Array.isArray(this.sessions[key])) {
+            this.sessions[key] = { name: key.replace('session', 'Session '), messages: this.sessions[key] };
+          }
+        }
+        
         // Ensure at least one session exists
-        if (Object.keys(this.sessions).length === 0) {
-          this.sessions['session1'] = [];
+if (Object.keys(this.sessions).length === 0) {
+          this.sessions['session1'] = { name: 'Session 1', messages: [] };
           this.saveSessionsToLocalStorage();
         }
       }
@@ -215,16 +222,16 @@
         return this.systemInstruction;
       }
 
-      addMessage(sender, text) {
+addMessage(sender, text) {
         if (!this.sessions[this.currentSession]) {
-          this.sessions[this.currentSession] = [];
+          this.sessions[this.currentSession] = { name: this.currentSession.replace('session', 'Session '), messages: [] };
         }
-        this.sessions[this.currentSession].push({ sender, text });
+        this.sessions[this.currentSession].messages.push({ sender, text });
         this.saveSessionsToLocalStorage();
       }
 
-      getCurrentSessionMessages() {
-        return this.sessions[this.currentSession] || [];
+getCurrentSessionMessages() {
+        return (this.sessions[this.currentSession] && this.sessions[this.currentSession].messages) || [];
       }
 
       switchSession(sessionId) {
@@ -232,10 +239,10 @@
         this.saveSessionsToLocalStorage();
       }
 
-      newSession() {
+newSession() {
         const sessionCount = Object.keys(this.sessions).length + 1;
         const sessionId = `session${sessionCount}`;
-        this.sessions[sessionId] = [];
+        this.sessions[sessionId] = { name: `Session ${sessionCount}`, messages: [] };
         this.currentSession = sessionId;
         this.saveSessionsToLocalStorage();
         return sessionId;
@@ -272,7 +279,7 @@
         container.dataset.session = sessionId;
         container.innerHTML = `
           <div class="d-flex w-100 justify-content-between">
-            <h6 class="mb-1">${sessionId.replace('session', 'Session ')}</h6>
+            <h6 class="mb-1">${sessionManager.sessions[sessionId].name}</h6>
             <button class="btn btn-sm btn-danger" onclick="deleteSession('${sessionId}', this)">
               Delete
             </button>
@@ -335,11 +342,13 @@
         renderMessages();
 
         // Update session name if context is not empty
-        if (data.context && data.context.trim() !== '') {
+          if (data.context && data.context.trim() !== '') {
           // Truncate context to 20 characters for session name
           const newSessionName = `${data.context.substring(0, 20)}${data.context.length > 20 ? '...' : ''}`;
           
-          // Update the session name in the UI
+          // Update the session name in the session data and UI
+          sessionManager.sessions[sessionManager.currentSession].name = newSessionName;
+          sessionManager.saveSessionsToLocalStorage();
           const currentSessionElement = document.querySelector(`.session-container[data-session="${sessionManager.currentSession}"] h6`);
           if (currentSessionElement) {
             currentSessionElement.textContent = newSessionName;
