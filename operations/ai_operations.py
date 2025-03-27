@@ -24,11 +24,14 @@ class AiOperations:
 
     # Processes the question using the language model and manages the session's message thread.
     def get_answer(self, question: str, session_id: str) -> str:
+        first_time = False
+        context = ""
         if not session_id:
             return "Session ID is required"
         if session_id not in self.messages_thread:
             self.messages_thread[session_id] = []
             self.messages_thread[session_id].append(self.system_instruction)
+            first_time = True
 
         try:
             prompt = f"{question}\n\n {output_parser.get_format_instructions()}"
@@ -37,12 +40,16 @@ class AiOperations:
             
             # Parse the output
             parsed_response = output_parser.parse(output)
+            
+            if first_time:
+                context = parsed_response.format_LTM()[2]
+                self.messages_thread[session_id].append(context)
 
             save_metadata(parsed_response.format_LTM()[1])
         except Exception as e:
             print(f"An error occurred: {e}")
-
-        return str(parsed_response.format_LTM()[0])
+    
+        return (str(parsed_response.format_LTM()[0]), context)
 
     # Deletes the message thread associated with the given session id.
     def delete_session_thread(self, session_id: str) -> None:

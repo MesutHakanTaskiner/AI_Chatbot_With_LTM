@@ -23,11 +23,14 @@ async def ask_question(request: Request):
     question = data.get("question", "")
     session_id = data.get("session", None)
 
-    print(f"Question: {question}, Session: {session_id}")
+    response, context = ai_ops.get_answer(question, session_id)
 
-    response = ai_ops.get_answer(question, session_id)
+    print(f"Response: {response}", f"Context: {context}")
 
-    return JSONResponse(content={"response": response, "session": session_id})
+    if context != "":
+        return JSONResponse(content={"response": response, "session": session_id, "context": context})
+    else:
+        return JSONResponse(content={"response": response, "session": session_id})
 
 
 @app.delete("/session/{session_id}")

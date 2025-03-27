@@ -13,15 +13,19 @@ class CriticalInfo(BaseModel):
     additional_info: List[str]           # Additional information about the user
 
 
+class ContextAndLTMScores(BaseModel):
+    context: str
+
 class LTMInformations(BaseModel):
     critical_informations: CriticalInfo
 
 class ResponseSchema(BaseModel):
     response: str = Field(description="Response from the language model")
     ltm_informations: LTMInformations = Field(description="LTM information")
+    context: str = Field(description="Context of the conversation")
 
     def format_LTM(self) -> str:
         memory = self.ltm_informations.critical_informations
         return (
-            self.response, memory
+            self.response, memory, self.context
         )
