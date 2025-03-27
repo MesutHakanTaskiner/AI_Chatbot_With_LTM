@@ -1,5 +1,5 @@
 import os
-from database.init_db import init_db, LTMName, LTMDates, LTMProfession, LTMLocation, LTMPersonalDetails, LTMGoals, LTMSpecialDetails, LTMAdditionalDetails
+from database.init_db import init_db, LTMName, LTMDates, LTMProfession, LTMLocation, LTMEducation, LTMPersonalDetails, LTMGoals, LTMSpecialDetails, LTMSocialInfo, LTMAdditionalDetails
 from sqlalchemy.orm import sessionmaker
 from operations.embedding import get_embedding
 
@@ -14,11 +14,14 @@ field_model_map = {
         "dates": LTMDates,
         "profession": LTMProfession,
         "location": LTMLocation,
+        "education": LTMEducation,
         "personal_details": LTMPersonalDetails,
         "goals": LTMGoals,
         "special_details": LTMSpecialDetails,
+        "social_info": LTMSocialInfo,
         "additional_details": LTMAdditionalDetails
     }
+
 
 def init_db_if_needed():
     # For SQLite, check if the database file exists (assumes DATABASE_URL of the form "sqlite:///LTM.db")
@@ -55,11 +58,8 @@ def save_metadata(ltm_info):
         if model:
             # if value exists in the database then update the value and embedding
             if session.query(model).filter(model.value == value).first():
-                session.query(model).filter(model.value == value).update({"value": value})
-                embedding = get_embedding(value)
-                session.query(model).filter(model.value == value).update({"embedding": embedding})
+                pass
 
-                record = model(value=value, embedding=embedding)
             
             # if value does not exist in the database then add the value and embedding
             else:
@@ -77,14 +77,16 @@ def get_ltm_data_from_db():
     """
     session = SessionLocal()
     ltm_data = {
-        "name": [name.value for name in session.query(LTMName).all()],
-        "dates": [dates.value for dates in session.query(LTMDates).all()],
-        "profession": [profession.value for profession in session.query(LTMProfession).all()],
-        "location": [location.value for location in session.query(LTMLocation).all()],
-        "personal_details": [personal_details.value for personal_details in session.query(LTMPersonalDetails).all()],
-        "goals": [goals.value for goals in session.query(LTMGoals).all()],
-        "special_details": [special_details.value for special_details in session.query(LTMSpecialDetails).all()],
-        "additional_details": [additional_details.value for additional_details in session.query(LTMAdditionalDetails).all()]
+        "name": [record.value for record in session.query(LTMName).all()],
+        "dates": [record.value for record in session.query(LTMDates).all()],
+        "profession": [record.value for record in session.query(LTMProfession).all()],
+        "location": [record.value for record in session.query(LTMLocation).all()],
+        "education": [record.value for record in session.query(LTMEducation).all()],
+        "personal_details": [record.value for record in session.query(LTMPersonalDetails).all()],
+        "goals": [record.value for record in session.query(LTMGoals).all()],
+        "special_details": [record.value for record in session.query(LTMSpecialDetails).all()],
+        "social_info": [record.value for record in session.query(LTMSocialInfo).all()],
+        "additional_details": [record.value for record in session.query(LTMAdditionalDetails).all()]
     }
 
     # Remove empty lists

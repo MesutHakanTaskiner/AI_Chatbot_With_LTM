@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 from typing import List
 
 
-class CriticInfo(BaseModel):
+class CriticalInfo(BaseModel):
     name: List[str]                      # Name of the user (first name, last name etc.)
     dates: List[str]                     # Dates (birth date, anniversary date etc.)
     profession: List[str]                # Profession of the user (doctor, engineer etc.)
@@ -14,14 +14,14 @@ class CriticInfo(BaseModel):
 
 
 class LTMInformations(BaseModel):
-    critic_informations: CriticInfo
+    critical_informations: CriticalInfo
 
 class ResponseSchema(BaseModel):
     response: str = Field(description="Response from the language model")
     ltm_informations: LTMInformations = Field(description="LTM information")
 
     def format_LTM(self) -> str:
-        memory = self.ltm_informations.critic_informations
+        memory = self.ltm_informations.critical_informations
         return (
             self.response, memory
         )

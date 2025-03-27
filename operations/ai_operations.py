@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from langchain_google_genai import GoogleGenerativeAI
 from langchain.output_parsers import PydanticOutputParser
 from typing import List, Dict
-from schemas.schema import ResponseSchema, CriticInfo, LTMInformations
+from schemas.schema import ResponseSchema
 from operations.db import save_metadata, get_ltm_data_from_db, delete_ltm_data, update_ltm_data
 import json
 from dotenv import load_dotenv

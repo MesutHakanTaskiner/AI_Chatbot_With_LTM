@@ -6,43 +6,57 @@ DATABASE_URL = "sqlite:///LTM.db"
 Base = declarative_base()
 
 class LTMName(Base):
-    __tablename__ = "ltm_names"
+    __tablename__ = "names"
     id = Column(Integer, primary_key=True, autoincrement=True)
     value = Column(String)
     embedding = Column(String)
 
 class LTMDates(Base):
-    __tablename__ = "ltm_dates"
+    __tablename__ = "dates"
     id = Column(Integer, primary_key=True, autoincrement=True)
     value = Column(String)
     embedding = Column(String)
 
 class LTMProfession(Base):
-    __tablename__ = "ltm_professions"
+    __tablename__ = "profession"
     id = Column(Integer, primary_key=True, autoincrement=True)
     value = Column(String)
     embedding = Column(String)
 
 class LTMLocation(Base):
-    __tablename__ = "ltm_locations"
+    __tablename__ = "location"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    value = Column(String)
+    embedding = Column(String)
+
+class LTMEducation(Base):
+    __tablename__ = "education"
     id = Column(Integer, primary_key=True, autoincrement=True)
     value = Column(String)
     embedding = Column(String)
 
 class LTMPersonalDetails(Base):
-    __tablename__ = "ltm_personal_details"
+    __tablename__ = "personal_details"
     id = Column(Integer, primary_key=True, autoincrement=True)
     value = Column(String)
     embedding = Column(String)
+
 
 class LTMGoals(Base):
-    __tablename__ = "ltm_goals"
+    __tablename__ = "goals"
     id = Column(Integer, primary_key=True, autoincrement=True)
     value = Column(String)
     embedding = Column(String)
 
+
 class LTMSpecialDetails(Base):
-    __tablename__ = "ltm_special_details"
+    __tablename__ = "special_details"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    value = Column(String)
+    embedding = Column(String)
+
+class LTMSocialInfo(Base):
+    __tablename__ = "social_info"
     id = Column(Integer, primary_key=True, autoincrement=True)
     value = Column(String)
     embedding = Column(String)
