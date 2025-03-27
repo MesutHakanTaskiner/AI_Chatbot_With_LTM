@@ -446,7 +446,7 @@
               const item = document.createElement('a');
               item.href = "#";
               item.className = "list-group-item list-group-item-action";
-              item.textContent = key + ": " + memory[key];
+              item.textContent = memory[key];
               item.onclick = function(e) {
                  e.preventDefault();
                  showEditMemoryItem(key, memory[key]);
@@ -499,7 +499,7 @@
        fetch('/delete_memory', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ key: key })
+       body: JSON.stringify({ key: key, value: document.getElementById('editMemoryValue').value })
        })
        .then(response => response.json())
        .then(data => {

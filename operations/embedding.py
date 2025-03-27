@@ -9,7 +9,12 @@ API_KEY = os.getenv("API_KEY")
 embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=API_KEY)
 
 
-def embedding_creator(text: str) -> str:
+def get_embedding(text: str) -> str:
     vector = embeddings.embed_query(text)
 
     return str(vector)
+
+
+# Cosine similarity between two embeddings
+def cosine_similarity(embedding1: str, embedding2: str) -> float:
+    return embeddings.cosine_similarity(embedding1, embedding2)
