@@ -16,7 +16,8 @@ class AiOperations:
         self.llm = GoogleGenerativeAI(
             model="gemini-2.0-flash",
             google_api_key=API_KEY,
-            temperature=0.1
+            temperature=0.1,
+            max_tokens=4096
         )
         self.messages_thread: Dict[str, List[str]] = {}
         self.system_instruction = system_instruction
@@ -92,3 +93,5 @@ class AiOperations:
             return "Memory deleted successfully"
         return "Memory not found"
     
+    def agent_response(self, response: str) -> str:
+        print("Agent response", response)
