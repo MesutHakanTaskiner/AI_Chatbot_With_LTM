@@ -14,12 +14,8 @@ def get_memories(memory: List) -> str:
     """
     try:
         raw_data = memory[0].get_all()
-        data = []
 
-        for i in raw_data["results"]:
-            data.append(i["memory"])
-
-        return data
+        return raw_data
     except Exception as e:
         print(f"Error retrieving memory: {e}")
         return []
@@ -65,11 +61,14 @@ def delete_memory(memory: List, delete_data: Dict) -> str:
     try:
         raw_data = get_memories(memory)
 
+        print(f"Raw data: {raw_data}")
+        print(f"Delete data: {delete_data}")
+
         data_id = ""
         for data in raw_data["results"]:
             if data["memory"] == delete_data["value"]:
                 data_id = data["id"]
-
+        
         memory[0].delete(memory_id = data_id)
     except Exception as e:
         print(f"Error deleting memory: {e}")

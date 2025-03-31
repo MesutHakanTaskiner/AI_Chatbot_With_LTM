@@ -20,11 +20,13 @@
     }
     #sessions {
       width: 250px;
+      min-width: 250px;
+      max-width: 250px;
       background-color: #f8f9fa;
       border-right: 1px solid #dee2e6;
       overflow-y: auto;
       flex-shrink: 0; /* Prevent sidebar from shrinking */
-      height: 100%;
+      height: 100vh;
     }
     #messages {
       flex: 1;
@@ -513,9 +515,9 @@ newSession() {
        .then(response => response.json())
        .then(data => {
           alert("Memory updated successfully");
-          showMemoryPanel();
           var editModal = bootstrap.Modal.getInstance(document.getElementById('editMemoryModal'));
           editModal.hide();
+          location.reload();
        })
        .catch(error => {
           console.error('Error updating memory:', error);
@@ -533,9 +535,9 @@ newSession() {
        .then(response => response.json())
        .then(data => {
           alert("Memory deleted successfully");
-          showMemoryPanel();
           var editModal = bootstrap.Modal.getInstance(document.getElementById('editMemoryModal'));
           editModal.hide();
+          location.reload();
        })
        .catch(error => {
           console.error('Error deleting memory:', error);

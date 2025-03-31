@@ -114,20 +114,24 @@ class AiOperations:
     
     # Retrieves the memory data.
     def get_memory(self) -> Dict[str, str]:
-        data = get_memories(self.memory[0])
+        raw_data = get_memories(self.memory)
+        data = []
+
+        for i in raw_data["results"]:
+            data.append(i["memory"])
                 
         return data
 
     # Updates memory for a given key with a new value.
     def update_memory(self, update_data):
-        is_success = update_memory(self.memory[0], update_data)
+        is_success = update_memory(self.memory, update_data)
 
         return is_success
 
 
     # Deletes memory for a given key.
     def delete_memory(self, delete_data):
-        is_succes = delete_memory(self.memory[0], delete_data)
+        is_succes = delete_memory(self.memory, delete_data)
 
         return is_succes
 
