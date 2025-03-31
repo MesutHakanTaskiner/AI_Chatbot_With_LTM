@@ -114,23 +114,42 @@ class AiOperations:
     # Retrieves the memory data.
     def get_memory(self) -> Dict[str, str]:
         print(self.memory[0])
-        data = self.memory[0].get_all()["results"][0]["memory"]
+        raw_data = self.memory[0].get_all()
+        data = []
+        for i in raw_data["results"]:
+            data.append(i["memory"])
+
+        print(f"Memory data: {raw_data}")
+        
         return data
 
     # Updates memory for a given key with a new value.
-    def update_memory(self, data):
-        is_succes = update_ltm_data(data)
-        if is_succes:
-            return "Memory updated successfully"
-        return "Memory not found"
+    def update_memory(self, update_data):
+        raw_data = self.memory[0].get_all()
+        data_id = ""
+        data_new = ""
+        for data in raw_data["results"]:
+            if data["memory"] == update_data["old_value"]:
+                data_id = data["id"]
+                data_new = update_data["new_value"]
+
+        self.memory[0].update(data_id, data_new)
+        
+        return "Memory updated successfully"
+
 
     # Deletes memory for a given key.
-    def delete_memory(self, data):
-        is_success = delete_ltm_data(data)
+    def delete_memory(self, delete_data):
+        raw_data = self.memory[0].get_all()
+        data_id = ""
+        for data in raw_data["results"]:
+            if data["memory"] == delete_data["value"]:
+                data_id = data["id"]
 
-        if is_success:
-            return "Memory deleted successfully"
-        return "Memory not found"
+        self.memory[0].delete(memory_id = data_id)
+
+        return "Memory deleted successfully"
+
     
     def agent_response(self, response: str) -> str:
         print("Agent response", response)

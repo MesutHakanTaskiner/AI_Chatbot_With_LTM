@@ -54,7 +54,7 @@ async def get_system_instruction():
 async def get_memory():
     memory_data = ai_ops.get_memory()
 
-    print(f"Memory data: {memory_data}")
+    print(f"Memory data: {memory_data}, type: {type(memory_data)}")
     return JSONResponse(content={"memory": memory_data})
 
 @app.post("/update_memory")
