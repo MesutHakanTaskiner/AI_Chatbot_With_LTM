@@ -16,7 +16,7 @@ class AiOperations:
         self.user_instruction = ""
 
     # Processes the question using the language model and manages the session's message thread.
-    def get_answer(self, question: str, session_id: str) -> str:
+    def get_answer(self, question: str, session_id: str, user_id: str = "default_user") -> str:
         config = {
             "llm": {
                 "provider": "litellm",
@@ -54,7 +54,8 @@ class AiOperations:
             self.messages_thread[session_id].append({"role": "system", "content": self.system_instruction})
             first_time = True
 
-        relevant_memories = memory.search(query=question, user_id="Admin", limit=3)
+        print(question, session_id, user_id)
+        relevant_memories = memory.search(query=question, user_id=user_id, limit=3)
         memories_str = "\n".join(f"- {entry['memory']}" for entry in relevant_memories["results"])
         print(f"Relevant memories: {relevant_memories}")
         print(f"Memories string: {memories_str}")
@@ -67,11 +68,11 @@ class AiOperations:
 
             self.messages_thread[session_id].append({"role": "user", "content": prompt})
             response = completion(model="gemini/gemini-2.0-flash", messages=self.messages_thread[session_id])
-            self.messages_thread[session_id].append({"role": "assistant", "content": response['choices'][0]['message']['content']})
+            self.messages_thread[session_id].append({"role": "assistant", "content": response.choices[0].message.content})
 
             try:
                 # Parse the output
-                parsed_response = output_parser.parse(response['choices'][0]['message']['content'])
+                parsed_response = output_parser.parse(response.choices[0].message.content)
             except Exception as e:
                 print(f"Parsing error: {e}")
             
@@ -82,7 +83,7 @@ class AiOperations:
             print(f"Response: {parsed_response.format_LTM()[0]}")
             print(f"Context: {parsed_response.format_LTM()[1]}")
 
-            memory.add(messages=self.messages_thread[session_id], user_id="Admin")
+            memory.add(self.messages_thread[session_id], user_id=user_id)
 
         except Exception as e:
             print(f"An error occurred: {e}")

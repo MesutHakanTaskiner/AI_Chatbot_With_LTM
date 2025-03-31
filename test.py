@@ -1,63 +1,41 @@
+from openai import OpenAI
+from mem0 import Memory
 import os
-from mem0 import Memory
 
-os.environ["GEMINI_API_KEY"] = "AIzaSyD09_GL15OALgvia2b4X_Z315nRTV-twI0"
+os.environ["OPENAI_API_KEY"] = "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"  # Replace with your OpenAI API key
 
-config = {
-    "llm": {
-        "provider": "litellm",
-        "config": {
-            "model": "gemini/gemini-2.0-flash",
-            "temperature": 0.2,
-            "max_tokens": 1500,
-        }
-    },
-    "embedder": {
-        "provider": "gemini",
-        "config": {
-            "model": "models/text-embedding-004",
-        }
-    },
-    "vector_store": {
-        "provider": "qdrant",
-        "config": {
-            "embedding_model_dims": 768,
-            "path": os.getcwd() + "/qdrant",
-        }
-    },
-    "history_db_path": "history.db"
-}
 
-m = Memory.from_config(config)
-messages = [
-    {"role": "system", "content": "You are a helpful assistant."},
-    {"role": "user", "content": "Hello! How are you? My name is Alice."},
-    {"role": "assistant", "content": "I'm good, thank you! How can I assist you today?"},
-    {"role": "user", "content": "Can you tell me about the weather?"},
-    {"role": "assistant", "content": "Sure! What location are you interested in?"},
-    {"role": "user", "content": "New York."},
-    {"role": "assistant", "content": "The weather in New York is sunny with a high of 75°F."},
-    {"role": "user", "content": "Thanks!"},
-    {"role": "assistant", "content": "You're welcome! Let me know if you need anything else."},
-]
+openai_client = OpenAI()
+memory = Memory()
 
-m.add(messages, user_id="alice")
+def chat_with_memories(message: str, user_id: str = "default_user") -> str:
+    # Retrieve relevant memories
+    relevant_memories = memory.search(query=message, user_id=user_id, limit=3)
+    memories_str = "\n".join(f"- {entry['memory']}" for entry in relevant_memories["results"])
+    
+    # Generate Assistant response
+    system_prompt = f"You are a helpful AI. Answer the question based on query and memories.\nUser Memories:\n{memories_str}"
+    messages = [{"role": "system", "content": system_prompt}, {"role": "user", "content": message}]
+    response = openai_client.chat.completions.create(model="gpt-4o-mini", messages=messages)
+    assistant_response = response.choices[0].message.content
+    
+    print(f"relevant memories: {relevant_memories}")
+    print(f'Memories string: {memories_str}')
 
-'''import os
-from mem0 import Memory
+    # Create new memories from the conversation
+    messages.append({"role": "assistant", "content": assistant_response})
+    memory.add(messages, user_id=user_id)
 
-os.environ["OPENAI_API_KEY"] = "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"
+    return assistant_response
 
-config = {
-    "llm": {
-        "provider": "openai",
-        "config": {
-            "model": "gpt-4o",
-            "temperature": 0.2,
-            "max_tokens": 1500,
-        }
-    }
-}
+def main():
+    print("Chat with AI (type 'exit' to quit)")
+    while True:
+        user_input = input("You: ").strip()
+        if user_input.lower() == 'exit':
+            print("Goodbye!")
+            break
+        print(f"AI: {chat_with_memories(user_input)}")
 
-m = Memory.from_config(config)
-m.add("Likes to play cricket on weekends", user_id="alice", metadata={"category": "hobbies"})'''
+if __name__ == "__main__":
+    main()
