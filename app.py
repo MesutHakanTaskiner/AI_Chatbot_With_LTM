@@ -25,8 +25,6 @@ async def ask_question(request: Request):
 
     response, context = ai_ops.get_answer(question, session_id)
 
-    print(f"Response: {response}", f"Context: {context}")
-
     if context != "":
         return JSONResponse(content={"response": response, "session": session_id, "context": context})
     else:
@@ -72,7 +70,5 @@ async def delete_memory(request: Request):
     return JSONResponse(content={"status": "success", "message": "Memory deleted", "result": result})
 
 if __name__ == "__main__":
-    from operations.db import init_db_if_needed
-    init_db_if_needed()
     import uvicorn
     uvicorn.run("app:app", host="127.0.0.1", port=8000, reload=True)

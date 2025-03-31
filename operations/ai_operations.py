@@ -1,56 +1,89 @@
 import os
-from dotenv import load_dotenv
-from langchain_google_genai import GoogleGenerativeAI
-from langchain.output_parsers import PydanticOutputParser
 from typing import List, Dict
+from utils.config import system_instruction
+from mem0 import Memory
+from litellm import completion
 from schemas.schema import ResponseSchema
-from operations.db import save_metadata, get_ltm_data_from_db, delete_ltm_data, update_ltm_data
-import json
-from utils.config import system_instruction, system_instruction_2, API_KEY
+from langchain.output_parsers import PydanticOutputParser
 
 output_parser = PydanticOutputParser(pydantic_object=ResponseSchema)
 
 class AiOperations:
     # Initializes AiOperations by setting up the language model and message threads.
     def __init__(self) -> None:
-        self.llm = GoogleGenerativeAI(
-            model="gemini-2.0-flash",
-            google_api_key=API_KEY,
-            temperature=0.1,
-            max_tokens=4096
-        )
         self.messages_thread: Dict[str, List[str]] = {}
         self.system_instruction = system_instruction
         self.user_instruction = ""
 
     # Processes the question using the language model and manages the session's message thread.
     def get_answer(self, question: str, session_id: str) -> str:
+        config = {
+            "llm": {
+                "provider": "litellm",
+                "config": {
+                    "model": "gemini/gemini-2.0-flash",
+                    "temperature": 0.2,
+                    "max_tokens": 1500,
+                }
+            },
+            "embedder": {
+                "provider": "gemini",
+                "config": {
+                    "model": "models/text-embedding-004",
+                }
+            },
+            "vector_store": {
+                "provider": "qdrant",
+                "config": {
+                    "embedding_model_dims": 768,
+                    "path": os.getcwd() + "/qdrant",
+                }
+            },
+            "history_db_path": "history.db"
+        }
+
+        memory = Memory.from_config(config)
+
+
         first_time = False
         context = ""
         if not session_id:
             return "Session ID is required"
         if session_id not in self.messages_thread:
             self.messages_thread[session_id] = []
-            self.messages_thread[session_id].append(self.system_instruction)
+            self.messages_thread[session_id].append({"role": "system", "content": self.system_instruction})
             first_time = True
 
+        relevant_memories = memory.search(query=question, user_id="Admin", limit=3)
+        memories_str = "\n".join(f"- {entry['memory']}" for entry in relevant_memories["results"])
+        print(f"Relevant memories: {relevant_memories}")
+        print(f"Memories string: {memories_str}")
+
+        print(f"First time: {self.messages_thread[session_id]}")
         try:
-            prompt = f"{question}\n\n {output_parser.get_format_instructions()}"
-            self.messages_thread[session_id].append(prompt)
-            output = self.llm.invoke(self.messages_thread[session_id])
-            
-            print(f"Output: {output}")
+            prompt = f"{question}\n\n {output_parser.get_format_instructions()} \n\n User Memories:\n{memories_str}" 
 
-            # Parse the output
-            parsed_response = output_parser.parse(output)
+            print(f"Prompt: {prompt}")
+
+            self.messages_thread[session_id].append({"role": "user", "content": prompt})
+            response = completion(model="gemini/gemini-2.0-flash", messages=self.messages_thread[session_id])
+            self.messages_thread[session_id].append({"role": "assistant", "content": response['choices'][0]['message']['content']})
+
+            try:
+                # Parse the output
+                parsed_response = output_parser.parse(response['choices'][0]['message']['content'])
+            except Exception as e:
+                print(f"Parsing error: {e}")
             
+
             if first_time:
-                context = parsed_response.format_LTM()[2]
-                self.messages_thread[session_id].append(context)
+                context = parsed_response.format_LTM()[1]
 
-            print(f"Response: {parsed_response.format_LTM()}")
+            print(f"Response: {parsed_response.format_LTM()[0]}")
+            print(f"Context: {parsed_response.format_LTM()[1]}")
 
-            save_metadata(parsed_response.format_LTM()[1])
+            memory.add(messages=self.messages_thread[session_id], user_id="Admin")
+
         except Exception as e:
             print(f"An error occurred: {e}")
     
