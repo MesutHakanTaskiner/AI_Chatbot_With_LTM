@@ -69,8 +69,8 @@ def delete_memory(memory: List, delete_data: Dict) -> str:
     """
     try:
         raw_data = get_memories(memory)
-        print(f"Raw data: {raw_data}")
-        print(f"Delete data: {delete_data}")
+        #print(f"Raw data: {raw_data}")
+        #print(f"Delete data: {delete_data}")
         data_id = ""
         for data in raw_data.get("results", []):
             if data.get("memory") == delete_data.get("value"):
