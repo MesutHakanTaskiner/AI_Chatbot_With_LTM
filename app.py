@@ -5,7 +5,7 @@ This module sets up routes for asking questions, deleting sessions, and modifyin
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
-from operations.ai_operations import AiOperations
+from operations.ai import AiOperations
 
 
 app = FastAPI()

@@ -5,6 +5,7 @@ from mem0 import Memory
 from litellm import completion
 from schemas.schema import ResponseSchema
 from langchain.output_parsers import PydanticOutputParser
+from operations.memory import get_memories, update_memory, delete_memory
 
 output_parser = PydanticOutputParser(pydantic_object=ResponseSchema)
 
@@ -113,43 +114,20 @@ class AiOperations:
     
     # Retrieves the memory data.
     def get_memory(self) -> Dict[str, str]:
-        print(self.memory[0])
-        raw_data = self.memory[0].get_all()
-        data = []
-        for i in raw_data["results"]:
-            data.append(i["memory"])
-
-        print(f"Memory data: {raw_data}")
-        
+        data = get_memories(self.memory[0])
+                
         return data
 
     # Updates memory for a given key with a new value.
     def update_memory(self, update_data):
-        raw_data = self.memory[0].get_all()
-        data_id = ""
-        data_new = ""
-        for data in raw_data["results"]:
-            if data["memory"] == update_data["old_value"]:
-                data_id = data["id"]
-                data_new = update_data["new_value"]
+        is_success = update_memory(self.memory[0], update_data)
 
-        self.memory[0].update(data_id, data_new)
-        
-        return "Memory updated successfully"
+        return is_success
 
 
     # Deletes memory for a given key.
     def delete_memory(self, delete_data):
-        raw_data = self.memory[0].get_all()
-        data_id = ""
-        for data in raw_data["results"]:
-            if data["memory"] == delete_data["value"]:
-                data_id = data["id"]
+        is_succes = delete_memory(self.memory[0], delete_data)
 
-        self.memory[0].delete(memory_id = data_id)
+        return is_succes
 
-        return "Memory deleted successfully"
-
-    
-    def agent_response(self, response: str) -> str:
-        print("Agent response", response)
