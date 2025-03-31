@@ -113,7 +113,8 @@ class AiOperations:
     
     # Retrieves the memory data.
     def get_memory(self) -> Dict[str, str]:
-        data = get_ltm_data_from_db()
+        print(self.memory[0])
+        data = self.memory[0].get_all()["results"][0]["memory"]
         return data
 
     # Updates memory for a given key with a new value.
