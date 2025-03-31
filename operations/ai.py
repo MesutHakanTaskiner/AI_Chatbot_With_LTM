@@ -156,8 +156,12 @@ class AiOperations:
         """
         raw_data = get_memories(self.memory)
         data = []
-        for i in raw_data["results"]:
-            data.append(i["memory"])
+        try:
+            for i in raw_data["results"]:
+                data.append(i["memory"])
+        except Exception as e:
+            print(f"Error retrieving memory: {e}")
+            return {}
         return data
 
     def update_memory(self, update_data):
