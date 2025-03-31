@@ -57,7 +57,7 @@ class AiOperations:
             return "Session ID is required"
         if session_id not in self.messages_thread:
             self.messages_thread[session_id] = []
-            self.messages_thread[session_id].append({"role": "system", "content": self.system_instruction})
+            self.messages_thread[session_id].append({"role": "system", "content": self.system_instruction + "\n\n" + self.user_instruction})
             first_time = True
 
         relevant_memories = memory.search(query=question, user_id=user_id, limit=3)
