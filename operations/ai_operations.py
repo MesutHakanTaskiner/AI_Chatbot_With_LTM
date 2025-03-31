@@ -14,35 +14,40 @@ class AiOperations:
         self.messages_thread: Dict[str, List[str]] = {}
         self.system_instruction = system_instruction
         self.user_instruction = ""
+        self.memory: List[str] = []
 
     # Processes the question using the language model and manages the session's message thread.
     def get_answer(self, question: str, session_id: str, user_id: str = "default_user") -> str:
-        config = {
-            "llm": {
-                "provider": "litellm",
-                "config": {
-                    "model": "gemini/gemini-2.0-flash",
-                    "temperature": 0.2,
-                    "max_tokens": 1500,
-                }
-            },
-            "embedder": {
-                "provider": "gemini",
-                "config": {
-                    "model": "models/text-embedding-004",
-                }
-            },
-            "vector_store": {
-                "provider": "qdrant",
-                "config": {
-                    "embedding_model_dims": 768,
-                    "path": os.getcwd() + "/qdrant",
-                }
-            },
-            "history_db_path": "history.db"
-        }
+        if len(self.memory) == 0:
+            config = {
+                "llm": {
+                    "provider": "litellm",
+                    "config": {
+                        "model": "gemini/gemini-2.0-flash",
+                        "temperature": 0.2,
+                        "max_tokens": 1500,
+                    }
+                },
+                "embedder": {
+                    "provider": "gemini",
+                    "config": {
+                        "model": "models/text-embedding-004",
+                    }
+                },
+                "vector_store": {
+                    "provider": "qdrant",
+                    "config": {
+                        "embedding_model_dims": 768,
+                        "path": os.getcwd() + "/qdrant",
+                    }
+                },
+                "history_db_path": "history.db"
+            }
 
-        memory = Memory.from_config(config)
+            self.memory.append(Memory.from_config(config))
+            memory = self.memory[0]
+        else:
+            memory = self.memory[0]
 
 
         first_time = False
@@ -54,7 +59,6 @@ class AiOperations:
             self.messages_thread[session_id].append({"role": "system", "content": self.system_instruction})
             first_time = True
 
-        print(question, session_id, user_id)
         relevant_memories = memory.search(query=question, user_id=user_id, limit=3)
         memories_str = "\n".join(f"- {entry['memory']}" for entry in relevant_memories["results"])
         print(f"Relevant memories: {relevant_memories}")
