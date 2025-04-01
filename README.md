@@ -5,13 +5,13 @@ GPT-clone is a Python-based project that implements a simple GPT-like applicatio
 
 Memory Management with mem0 (https://github.com/mem0ai/mem0)
 
-This project uses mem0 for implementing long-term memory management. While an initial agent-based memory structure was developed manually, mem0 was later adopted due to its cleaner and more reliable approach to:
+This project uses mem0 to handle long-term memory in a smarter, more scalable way. mem0 enhances AI systems with intelligent memory, enabling them to remember user preferences, adapt over time, and deliver personalized experiences.
 
-    Automating memory extraction from responses after the first prompt.
+Key Benefits:
 
-    Managing embedding creation, filtering, and storage with minimal manual handling.
-
-    Providing a structured and scalable local memory system without relying on external vector databases.
+    Automatic memory extraction and management
+    Developer-friendly easy integration
+    Scalable local memory
 
 By leveraging mem0, the project benefits from a streamlined long-term memory system that aligns well with the expected behavior of GPT-like memory tools.
 
