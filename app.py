@@ -151,4 +151,4 @@ if __name__ == "__main__":
     The application is served on host '127.0.0.1' and port 8000 with auto-reload enabled.
     """
     import uvicorn
-    uvicorn.run("app:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("app:app", host="127.0.0.1", port=8000)
