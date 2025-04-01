@@ -8,15 +8,18 @@
   <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/lux/bootstrap.min.css" rel="stylesheet">
   <style>
     :root {
-      --primary-color: #3B82F6;
+      --primary-color: #97dd80;
       --secondary-color: #334e68;
-      --light-bg: #e0dddd;
+      --light-bg: #f4f4f4;
       --user-msg-bg: #f6f8dd;
       --gpt-msg-bg: #E0F2FE;
       --system-msg-bg: #f3e5f5;
-      --sidebar-bg: #f5ecd7;
-      --hover-color: #dfe6ed;
-      --border-color: #d0d9e4;
+      --sidebar-bg: #f4f4f4;
+      --hover-color: #e0e0e0;
+      --border-color: #d3d3d3;
+    }
+    * {
+      color: #000000 !important;
     }
     
     body {
@@ -25,6 +28,7 @@
       flex-direction: column;
       overflow: hidden;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #000000;
       background-color: var(--light-bg);
     }
     
@@ -115,8 +119,8 @@
     }
     
     .session-container.active {
-      background-color: var(--primary-color) !important;
-      color: white !important;
+      background-color: #d8d8d8 !important;
+      color: #000000 !important;
     }
     
     .session-container h6 {
@@ -143,7 +147,7 @@
     }
     
     .navbar {
-      background: linear-gradient(90deg, #3B82F6, #06B6D4) !important;
+      background: #cccccc !important;
       padding: 10px 20px;
     }
     
@@ -219,7 +223,7 @@
     }
     
     .session-list-item.active h6 {
-      color: white;
+      color: #000000 !important;
     }
   </style>
 </head>
