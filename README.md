@@ -144,7 +144,7 @@ To run the application without Docker, follow these steps:
    ```
 
 
-## Docker ()
+## Docker
 This project can be run inside a Docker container. The provided Dockerfile (and its duplicate "dockerfile") uses the python:3.11-slim image to create a lightweight container. It sets the working directory to /app, installs dependencies from requirements.txt, copies the project files, and runs the application with uvicorn on port 8000.
 
 Using Docker Compose:
