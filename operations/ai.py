@@ -54,6 +54,7 @@ class AiOperations:
         """
         first_time = False
         context = ""
+        current_messages = []
         if not session_id:
             return ("Session ID is required", "")
         if session_id not in self.messages_thread:
@@ -78,8 +79,11 @@ class AiOperations:
                 parsed_response = type('DefaultResponse', (), {"format_LTM": lambda: (response.choices[0].message.content, "")})()
             if first_time:
                 context = parsed_response.format_LTM()[1]
+
+            current_messages.append({"role": "user", "content": question})
+            current_messages.append({"role": "assistant", "content": response.choices[0].message.content})
             # Store the conversation history in memory.
-            self.memory.add(self.messages_thread[session_id], user_id=user_id)
+            self.memory.add(current_messages, user_id=user_id)
         except Exception as e:
             print(f"An error occurred: {e}")
         return (str(parsed_response.format_LTM()[0]), context)
