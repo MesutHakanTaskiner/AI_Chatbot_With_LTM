@@ -101,10 +101,24 @@ git clone https://github.com/MesutHakanTaskiner/AI_Chatbot_With_LTM.git
    ```
 
 ## Usage
-To run the application, execute:
-```
-python app.py
-```
+To run the application without Docker, follow these steps:
+
+1. Create a virtual environment (for Windows):
+   ```bash
+   python -m venv chatbot
+   chatbot\Scripts\activate
+   ```
+   (Ensure that the virtual environment is activated before proceeding.)
+2. Install dependencies within the activated environment:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. (Optional) Configure your environment variables:
+   Copy the `.env.example` file to a new file named `.env` and update it with your settings.
+4. Run the application:
+   ```bash
+   python app.py
+   ```
 
 ## Configuration
 Before running the application, ensure that your environment variables are correctly set up:
