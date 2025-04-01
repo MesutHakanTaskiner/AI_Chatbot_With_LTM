@@ -16,6 +16,9 @@ Key Benefits:
 By leveraging mem0, the project benefits from a streamlined long-term memory system that aligns well with the expected behavior of GPT-like memory tools.
 
 ## Project Structure
+- **Gemini Information**
+Gemini is a state-of-the-art language model that serves as the primary NLP engine in this project, processing natural language inputs and generating high-quality responses. Its integration is configured via the API key in the .env file, enabling robust dialogue management and advanced language understanding.
+
 - **app.py**  
   The main entry point of the application. It initializes configurations, sets up modules, and orchestrates the workflow by importing necessary components from other modules.
 
@@ -101,42 +104,45 @@ By leveraging mem0, the project benefits from a streamlined long-term memory sys
 - **Design Considerations:**  
   Keeps the utility functions organized, making them easily accessible and promoting reuse throughout the project.
 
-## Installation
-
-```bash
-git clone https://github.com/MesutHakanTaskiner/AI_Chatbot_With_LTM.git
-```
-1. Ensure you have Python 3.x installed.
-2. Install the required dependencies:
-   ```
-   pip install -r requirements.txt
-   ```
-
-## Usage
-To run the application without Docker, follow these steps:
-
-1. Create a virtual environment (for Windows):
-   ```bash
-   python -m venv chatbot
-   chatbot\Scripts\activate
-   ```
-   (Ensure that the virtual environment is activated before proceeding.)
-2. Install dependencies within the activated environment:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. (Optional) Configure your environment variables:
-   Copy the `.env.example` file to a new file named `.env` and update it with your settings.
-4. Run the application:
-   ```bash
-   python app.py
-   ```
+## Databases
+This application uses two databases for different purposes:
+- Qdrant: A vector database utilized for storing and retrieving embeddings.
+- history.db: A SQLite database that retains conversation history and memory texts.
 
 ## Configuration
 Before running the application, ensure that your environment variables are correctly set up:
 1. Copy the .env.example file to a new file named .env.
 2. Open .env and replace the placeholder API_KEY value ("GEMINI_API_KEY") with your actual Gemini API key.
 Adjust settings and configurations as needed by editing `utils/config.py`.
+
+## Installation
+
+```bash
+git clone https://github.com/MesutHakanTaskiner/AI_Chatbot_With_LTM.git
+```
+
+## Usage
+To run the application without Docker, follow these steps:
+
+1. Ensure you have Python 3.x installed.
+
+2. Create a virtual environment (for Windows):
+   ```bash
+   python -m venv chatbot
+   chatbot\Scripts\activate
+   ```
+   (Ensure that the virtual environment is activated before proceeding.)
+3. Install dependencies within the activated environment:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. (Optional) Configure your environment variables:
+   Copy the `.env.example` file to a new file named `.env` and update it with your settings.
+5. Run the application:
+   ```bash
+   python app.py
+   ```
+
 
 ## Docker
 This project can be run inside a Docker container. The provided Dockerfile (and its duplicate "dockerfile") uses the python:3.11-slim image to create a lightweight container. It sets the working directory to /app, installs dependencies from requirements.txt, copies the project files, and runs the application with uvicorn on port 8000.
@@ -151,3 +157,9 @@ Using Docker Compose:
 This docker-compose configuration maps the current directory to /app in the container, allowing changes to be reflected immediately.
 
 If you are using environment variables, uncomment the relevant COPY command for .env in the Dockerfile.
+
+
+## Frontend Access
+Users can reach the frontend via:
+- http://0.0.0.0:8000
+- http://127.0.0.1:8000
