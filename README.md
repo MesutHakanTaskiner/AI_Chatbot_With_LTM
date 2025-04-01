@@ -111,3 +111,23 @@ Adjust settings and configurations as needed by editing `utils/config.py`.
 ## Contribution
 Contributions are welcome. Please fork the repository and submit a pull request with your proposed changes.
 
+## Docker
+
+This project can be run inside a Docker container. The provided Dockerfile (and its duplicate "dockerfile") uses the python:3.11-slim image to create a lightweight container. It sets the working directory to /app, installs dependencies from requirements.txt, copies the project files, and runs the application with uvicorn on port 8000.
+
+To build and run the Docker container using the Dockerfile:
+1. Build the image with:
+   docker build -t gpt-clone .
+2. Run the container with:
+   docker run -p 8000:8000 gpt-clone
+
+Alternatively, using Docker Compose:
+1. Ensure docker-compose is installed.
+2. Run the service with:
+   docker-compose up --build
+3. If docker build exists:
+   docker-compose up
+
+This docker-compose configuration maps the current directory to /app in the container, allowing changes to be reflected immediately.
+
+If you are using environment variables, uncomment the relevant COPY command for .env in the Dockerfile.
