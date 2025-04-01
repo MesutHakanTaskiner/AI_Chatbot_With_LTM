@@ -9,7 +9,7 @@ This project uses mem0 to handle long-term memory in a smarter, more scalable wa
 
 Key Benefits:
 
-    Automatic memory extraction and management
+    Memory extraction and management
     Developer-friendly easy integration
     Scalable local memory
 
