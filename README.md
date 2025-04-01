@@ -90,6 +90,10 @@ GPT-clone is a Python-based project that implements a simple GPT-like applicatio
   Keeps the utility functions organized, making them easily accessible and promoting reuse throughout the project.
 
 ## Installation
+
+```bash
+git clone https://github.com/MesutHakanTaskiner/AI_Chatbot_With_LTM.git
+```
 1. Ensure you have Python 3.x installed.
 2. Install the required dependencies:
    ```
