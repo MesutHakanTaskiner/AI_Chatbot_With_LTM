@@ -103,10 +103,11 @@ python app.py
 ```
 
 ## Configuration
+Before running the application, ensure that your environment variables are correctly set up:
+1. Copy the .env.example file to a new file named .env.
+2. Open .env and replace the placeholder API_KEY value ("GEMINI_API_KEY") with your actual Gemini API key.
 Adjust settings and configurations as needed by editing `utils/config.py`.
 
 ## Contribution
 Contributions are welcome. Please fork the repository and submit a pull request with your proposed changes.
 
-## License
-Specify the license information here (if applicable).
