@@ -1,7 +1,7 @@
-# GPT-clone
+# GPT
 
 ## Overview
-GPT-clone is a Python-based project that implements a simple GPT-like application. It integrates AI operations, memory management, and a basic web interface, making it easy to experiment with natural language processing techniques.
+Python-based project that implements a simple GPT-like application. It integrates AI operations, memory management, and a basic web interface, making it easy to experiment with natural language processing techniques.
 
 Memory Management with mem0 (https://github.com/mem0ai/mem0)
 
@@ -17,7 +17,7 @@ By leveraging mem0, the project benefits from a streamlined long-term memory sys
 
 ## Project Structure
 - **Gemini Information**
-Gemini is a state-of-the-art language model that serves as the primary NLP engine in this project, processing natural language inputs and generating high-quality responses. Its integration is configured via the API key in the .env file, enabling robust dialogue management and advanced language understanding.
+Gemini is a state-of-the-art language model that serves as the primary in this project, processing natural language inputs and generating high-quality responses. Its integration is configured via the API key in the .env file, enabling robust dialogue management and advanced language understanding.
 
 - **app.py**  
   The main entry point of the application. It initializes configurations, sets up modules, and orchestrates the workflow by importing necessary components from other modules.
@@ -52,7 +52,7 @@ Gemini is a state-of-the-art language model that serves as the primary NLP engin
   - Imports configuration data from `utils/config.py`.
   - Initializes core modules, such as AI processing (`operations/ai.py`) and memory management (`operations/memory.py`).
   - Sets up logging, error handling, or routing (if applicable) to link different parts of the application.
-  - May include a main function block (`if __name__ == "__main__":`) to start the application.
+  - Includes a main function block (`if __name__ == "__main__":`) to start the application.
 - **Design Considerations:**  
   Designed to serve as the orchestrator, keeping the startup logic simple and delegating detailed processing to specialized modules.
 
@@ -61,8 +61,8 @@ Gemini is a state-of-the-art language model that serves as the primary NLP engin
   Contains the algorithms and helper functions for processing text input.
 - **Key Functionalities:**  
   - Implements functions (e.g., `generate_response(input_text)`) to interface with AI models.
-  - May perform input validation, pre-process data, feed it into an AI model (locally or via an API), and post-process the generated response.
-  - Could include error handling for cases where the AI model fails or returns unexpected outputs.
+  - May perform input validation, pre-process data, feed it into an AI model, and post-process the generated response.
+  - Includes error handling for cases where the AI model fails or returns unexpected outputs.
 - **Design Considerations:**  
   Follows single-responsibility principles to keep AI-specific logic isolated, making it easier to update or swap out the underlying AI engine.
 
@@ -72,7 +72,6 @@ Gemini is a state-of-the-art language model that serves as the primary NLP engin
 - **Key Functionalities:**  
   - Provides functions or classes to store incoming conversation data.
   - Implements retrieval and update functions so that context is maintained during a session.
-  - Likely uses in-memory data structures (such as dictionaries or lists) to cache recent interactions.
 - **Design Considerations:**  
   Ensures data persistence (if needed) while keeping in-memory operations lightweight and efficient for fast access.
 
