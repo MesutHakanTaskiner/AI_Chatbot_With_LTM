@@ -1,6 +1,6 @@
 from typing import List, Dict
 
-def get_memories(memory: List) -> dict:
+def get_memories(memory: str) -> dict:
     """
     Retrieves all memories from the first Memory object in the list.
 
@@ -15,13 +15,13 @@ def get_memories(memory: List) -> dict:
     - dict: The dictionary containing all memory entries, or an empty dictionary if retrieval fails.
     """
     try:
-        raw_data = memory[0].get_all()
+        raw_data = memory.get_all()
         return raw_data
     except Exception as e:
         print(f"Error retrieving memory: {e}")
         return {}
 
-def update_memory(memory: List, update_data: Dict) -> str:
+def update_memory(memory: str, update_data: Dict) -> str:
     """
     Updates a memory entry with a new value.
     
@@ -45,7 +45,7 @@ def update_memory(memory: List, update_data: Dict) -> str:
                 data_new = update_data.get("new_value")
                 break  # Once found, exit the loop.
         if data_id:
-            memory[0].update(data_id, data_new)
+            memory.update(data_id, data_new)
             return "Memory updated successfully"
         else:
             return "No matching memory entry found"
@@ -53,7 +53,7 @@ def update_memory(memory: List, update_data: Dict) -> str:
         print(f"Error updating memory: {e}")
         return "Memory update failed"
 
-def delete_memory(memory: List, delete_data: Dict) -> str:
+def delete_memory(memory: str, delete_data: Dict) -> str:
     """
     Deletes a memory entry based on a specified memory value.
     
@@ -77,7 +77,7 @@ def delete_memory(memory: List, delete_data: Dict) -> str:
                 data_id = data.get("id")
                 break  # Once found, exit the loop.
         if data_id:
-            memory[0].delete(memory_id=data_id)
+            memory.delete(memory_id=data_id)
             return "Memory deleted successfully"
         else:
             return "No matching memory entry found"

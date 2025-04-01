@@ -20,3 +20,29 @@ API_KEY = os.getenv("API_KEY")
 
 # Setting GEMINI_API_KEY environment variable for use in the application or external libraries
 os.environ["GEMINI_API_KEY"] = API_KEY
+
+config = {
+    "llm": {
+        "provider": "litellm",
+        "config": {
+            "model": "gemini/gemini-2.0-flash",
+            "temperature": 0.2,
+            "max_tokens": 1500,
+        }
+    },
+    "embedder": {
+        "provider": "gemini",
+        "config": {
+            "model": "models/text-embedding-004",
+        }
+    },
+    "vector_store": {
+        "provider": "qdrant",
+        "config": {
+            "embedding_model_dims": 768,
+            "path": os.getcwd() + "/qdrant",
+            "on_disk": True,
+        }
+    },
+    "history_db_path": "history.db"
+}

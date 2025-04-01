@@ -1,11 +1,12 @@
 import os
-from typing import List, Dict
+from typing import List, Dict, Tuple
 from utils.config import system_instruction
 from mem0 import Memory
 from litellm import completion
 from schemas.schema import ResponseSchema
 from langchain.output_parsers import PydanticOutputParser
 from operations.memory import get_memories, update_memory, delete_memory
+from utils.config import config
 
 output_parser = PydanticOutputParser(pydantic_object=ResponseSchema)
 
@@ -26,9 +27,10 @@ class AiOperations:
         self.messages_thread: Dict[str, List[str]] = {}
         self.system_instruction = system_instruction
         self.user_instruction = ""
-        self.memory: List = []  # Should contain Memory objects
-
-    def get_answer(self, question: str, session_id: str, user_id: str = "default_user") -> str:
+        
+        self.memory = Memory.from_config(config)
+            
+    def get_answer(self, question: str, session_id: str, user_id: str = "default_user") -> Tuple[str, str]:
         """
         Processes a user's question and generates an answer using the language model.
         
@@ -50,48 +52,17 @@ class AiOperations:
         Returns:
         - tuple: Contains the assistant's response as a string and an optional context string.
         """
-        if len(self.memory) == 0:
-            config = {
-                "llm": {
-                    "provider": "litellm",
-                    "config": {
-                        "model": "gemini/gemini-2.0-flash",
-                        "temperature": 0.2,
-                        "max_tokens": 1500,
-                    }
-                },
-                "embedder": {
-                    "provider": "gemini",
-                    "config": {
-                        "model": "models/text-embedding-004",
-                    }
-                },
-                "vector_store": {
-                    "provider": "qdrant",
-                    "config": {
-                        "embedding_model_dims": 768,
-                        "path": os.getcwd() + "/qdrant",
-                        "on_disk": True,
-                    }
-                },
-                "history_db_path": "history.db"
-            }
-            self.memory.append(Memory.from_config(config))
-            memory = self.memory[0]
-        else:
-            memory = self.memory[0]
-
         first_time = False
         context = ""
         if not session_id:
-            return "Session ID is required"
+            return ("Session ID is required", "")
         if session_id not in self.messages_thread:
             self.messages_thread[session_id] = []
             # Start a new session with the initial system and user instructions.
             self.messages_thread[session_id].append({"role": "system", "content": self.system_instruction + "\n\n" + self.user_instruction})
             first_time = True
 
-        relevant_memories = memory.search(query=question, user_id=user_id, limit=3)
+        relevant_memories = self.memory.search(query=question, user_id=user_id, limit=3)
         memories_str = "\n".join(f"- {entry['memory']}" for entry in relevant_memories["results"])
         try:
             prompt = f"{question}\n\n {output_parser.get_format_instructions()} \n\n User Memories:\n{memories_str}"
@@ -104,12 +75,11 @@ class AiOperations:
                 parsed_response = output_parser.parse(response.choices[0].message.content)
             except Exception as e:
                 print(f"Parsing error: {e}")
+                parsed_response = type('DefaultResponse', (), {"format_LTM": lambda: (response.choices[0].message.content, "")})()
             if first_time:
                 context = parsed_response.format_LTM()[1]
-            #print(f"Response: {parsed_response.format_LTM()[0]}")
-            #print(f"Context: {parsed_response.format_LTM()[1]}")
             # Store the conversation history in memory.
-            memory.add(self.messages_thread[session_id], user_id=user_id)
+            self.memory.add(self.messages_thread[session_id], user_id=user_id)
         except Exception as e:
             print(f"An error occurred: {e}")
         return (str(parsed_response.format_LTM()[0]), context)
@@ -190,4 +160,3 @@ class AiOperations:
         """
         is_success = delete_memory(self.memory, delete_data)
         return is_success
-    
