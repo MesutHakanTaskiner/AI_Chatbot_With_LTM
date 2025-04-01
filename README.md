@@ -126,11 +126,7 @@ Before running the application, ensure that your environment variables are corre
 2. Open .env and replace the placeholder API_KEY value ("GEMINI_API_KEY") with your actual Gemini API key.
 Adjust settings and configurations as needed by editing `utils/config.py`.
 
-## Contribution
-Contributions are welcome. Please fork the repository and submit a pull request with your proposed changes.
-
 ## Docker
-
 This project can be run inside a Docker container. The provided Dockerfile (and its duplicate "dockerfile") uses the python:3.11-slim image to create a lightweight container. It sets the working directory to /app, installs dependencies from requirements.txt, copies the project files, and runs the application with uvicorn on port 8000.
 
 To build and run the Docker container using the Dockerfile:
