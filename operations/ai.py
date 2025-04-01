@@ -84,9 +84,13 @@ class AiOperations:
             current_messages.append({"role": "assistant", "content": response.choices[0].message.content})
             # Store the conversation history in memory.
             self.memory.add(current_messages, user_id=user_id)
+
+            return (str(parsed_response.format_LTM()[0]), context)
+
         except Exception as e:
             print(f"An error occurred: {e}")
-        return (str(parsed_response.format_LTM()[0]), context)
+
+            return response.choices[0].message.content
 
     def delete_session_thread(self, session_id: str) -> None:
         """
