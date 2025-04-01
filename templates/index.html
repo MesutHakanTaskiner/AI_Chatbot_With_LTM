@@ -683,46 +683,48 @@
     }
     
     function updateMemory() {
-       const key = document.getElementById('editMemoryKey').value;
-       const oldValue = document.getElementById('oldMemoryValue').value;
-       const newValue = document.getElementById('editMemoryValue').value;
-       fetch('/update_memory', {
+      const key = document.getElementById('editMemoryKey').value;
+      const oldValue = document.getElementById('oldMemoryValue').value;
+      const newValue = document.getElementById('editMemoryValue').value;
+      fetch('/update_memory', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ key: key, old_value: oldValue, new_value: newValue })
-       })
-       .then(response => response.json())
-       .then(data => {
+      })
+      .then(response => response.json())
+      .then(data => {
           alert("Memory updated successfully");
           var editModal = bootstrap.Modal.getInstance(document.getElementById('editMemoryModal'));
           editModal.hide();
-          showMemoryPanel(); // Refresh memory panel instead of reloading
-       })
-       .catch(error => {
+          window.location.href = '/'; // <-- Anasayfaya dön
+      })
+      .catch(error => {
           console.error('Error updating memory:', error);
           alert("Error updating memory item");
-       });
+      });
     }
+
     
     function deleteMemory() {
-       const key = document.getElementById('editMemoryKey').value;
-       fetch('/delete_memory', {
+      const key = document.getElementById('editMemoryKey').value;
+      fetch('/delete_memory', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ key: key, value: document.getElementById('editMemoryValue').value })
-       })
-       .then(response => response.json())
-       .then(data => {
+      })
+      .then(response => response.json())
+      .then(data => {
           alert("Memory deleted successfully");
           var editModal = bootstrap.Modal.getInstance(document.getElementById('editMemoryModal'));
           editModal.hide();
-          showMemoryPanel(); // Refresh memory panel instead of reloading
-       })
-       .catch(error => {
+          window.location.href = '/'; // <-- Anasayfaya dön
+      })
+      .catch(error => {
           console.error('Error deleting memory:', error);
           alert("Error deleting memory item");
-       });
+      });
     }
+
     
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
