@@ -75,7 +75,7 @@ async def delete_session(session_id: str):
     - JSONResponse: A confirmation message with session id.
     """
     app.state.ai_ops.delete_session_thread(session_id)
-    print(f"Session {session_id} deleted")
+    #print(f"Session {session_id} deleted")
     return JSONResponse(content={"status": "deleted", "session_id": session_id})
 
 @app.post("/set_system_instruction")
@@ -113,7 +113,7 @@ async def get_memory():
     - JSONResponse: A JSON object containing memory data.
     """
     memory_data = app.state.ai_ops.get_memory()
-    print(f"Memory data: {memory_data}, type: {type(memory_data)}")
+    #print(f"Memory data: {memory_data}, type: {type(memory_data)}")
     return JSONResponse(content={"memory": memory_data})
 
 @app.post("/update_memory")
