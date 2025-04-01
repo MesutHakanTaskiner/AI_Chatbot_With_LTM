@@ -71,6 +71,7 @@ class AiOperations:
                     "config": {
                         "embedding_model_dims": 768,
                         "path": os.getcwd() + "/qdrant",
+                        "on_disk": True,
                     }
                 },
                 "history_db_path": "history.db"
@@ -189,3 +190,4 @@ class AiOperations:
         """
         is_success = delete_memory(self.memory, delete_data)
         return is_success
+    
