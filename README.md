@@ -3,7 +3,7 @@
 ## Overview
 GPT-clone is a Python-based project that implements a simple GPT-like application. It integrates AI operations, memory management, and a basic web interface, making it easy to experiment with natural language processing techniques.
 
-Memory Management with mem0
+Memory Management with mem0 (https://github.com/mem0ai/mem0)
 
 This project uses mem0 for implementing long-term memory management. While an initial agent-based memory structure was developed manually, mem0 was later adopted due to its cleaner and more reliable approach to:
 
