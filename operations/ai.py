@@ -70,18 +70,19 @@ class AiOperations:
             #print(f"Prompt: {prompt}")
             self.messages_thread[session_id].append({"role": "user", "content": prompt})
             response = completion(model="gemini/gemini-2.0-flash", messages=self.messages_thread[session_id])
-            self.messages_thread[session_id].append({"role": "assistant", "content": response.choices[0].message.content})
+
             try:
                 # Attempt to parse the model's output.
                 parsed_response = output_parser.parse(response.choices[0].message.content)
+                self.messages_thread[session_id].append({"role": "assistant", "content": parsed_response.format_LTM()[0]})
             except Exception as e:
                 print(f"Parsing error: {e}")
                 parsed_response = type('DefaultResponse', (), {"format_LTM": lambda: (response.choices[0].message.content, "")})()
             if first_time:
                 context = parsed_response.format_LTM()[1]
-
+            
             current_messages.append({"role": "user", "content": question})
-            current_messages.append({"role": "assistant", "content": response.choices[0].message.content})
+            current_messages.append({"role": "assistant", "content":  parsed_response.format_LTM()[0]})
             # Store the conversation history in memory.
             self.memory.add(current_messages, user_id=user_id)
 
