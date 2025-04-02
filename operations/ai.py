@@ -90,7 +90,7 @@ class AiOperations:
         except Exception as e:
             print(f"An error occurred: {e}")
 
-            return response.choices[0].message.content
+            return response.choices[0].message.content, ""
 
     def delete_session_thread(self, session_id: str) -> None:
         """
